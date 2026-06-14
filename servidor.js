@@ -3,8 +3,9 @@ const mysql = require('mysql2/promise');
 const path = require('path');
 const bodyParser = require('body-parser');
 const PDFDocument = require('pdfkit');
+require('dotenv').config();
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 
 
@@ -22,7 +23,7 @@ app.use(express.static(path.join(__dirname, 'Public')));
 // ==========================
 // CONEXION MYSQL
 // ==========================
-const conexion = mysql.createPool({
+const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
@@ -903,7 +904,7 @@ app.get('/empleados/eliminar/:id', async (req, res) => {
 app.listen(PORT, () => {
 
     console.log(
-        `🚀 Servidor iniciado en: http://localhost:${PORT}`
-    );
+    `🚀 Servidor ejecutándose en el puerto ${PORT}`
+);
 
 });
