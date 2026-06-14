@@ -345,3 +345,28 @@ th:last-child,
 td:last-child{
     text-align:center;
 }
+
+/* BOTON NUEVO EMPLEADO */
+
+p button{
+    background:#10b981;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all .3s ease;
+    box-shadow:0 4px 10px rgba(16,185,129,.25);
+}
+
+p button:hover{
+    background:#059669;
+    transform:translateY(-2px);
+    box-shadow:0 6px 15px rgba(16,185,129,.35);
+}
+
+p button:active{
+    transform:translateY(0);
+}
