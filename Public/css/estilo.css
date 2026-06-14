@@ -406,3 +406,36 @@ p button:active{
 .link:active{
     transform:translateY(0);
 }
+
+
+.popup{
+    background:#10b981;
+    color:white;
+
+    border:none;
+
+    padding:12px 24px;
+
+    border-radius:8px;
+
+    font-size:15px;
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:all .3s ease;
+
+    box-shadow:0 4px 10px rgba(16,185,129,.25);
+}
+
+.popup:hover{
+    background:#059669;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 6px 15px rgba(16,185,129,.35);
+}
+
+.popup:active{
+    transform:translateY(0);
+}
