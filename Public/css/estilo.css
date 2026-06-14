@@ -143,3 +143,38 @@ border-radius:10px;
     padding:20px;
     border-radius:10px;
 }
+
+
+.tabla-contenedor {
+    max-height: 450px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-contenedor {
+    overflow-x: auto;
+}
+
+
+.tabla-contenedor {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead th {
+    position: sticky;
+    top: 0;
+    background: #1f2937;
+    color: white;
+    z-index: 10;
+}

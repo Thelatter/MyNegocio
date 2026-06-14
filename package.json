@@ -7,9 +7,6 @@
   "scripts": {
     "start": "node servidor.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "alert-node": "^5.0.1",
     "body-parser": "^2.2.2",
