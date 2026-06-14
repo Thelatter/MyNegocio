@@ -439,3 +439,40 @@ p button:active{
 .popup:active{
     transform:translateY(0);
 }
+
+
+.rep{
+    background:#2563eb;
+    color:white;
+
+    border:none;
+
+    padding:12px 24px;
+
+    border-radius:8px;
+
+    font-size:15px;
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:all .3s ease;
+
+    box-shadow:0 4px 10px rgba(37,99,235,.25);
+}
+
+.rep:hover{
+    background:#1d4ed8;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 6px 15px rgba(37,99,235,.35);
+}
+
+.rep:active{
+    transform:translateY(0);
+}
+
+.rep:focus{
+    outline:none;
+}
