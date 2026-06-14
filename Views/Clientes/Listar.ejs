@@ -46,7 +46,6 @@
 
 <button
 type="button"
-class="boton btn-editar"
 onclick="editarCliente(
 '<%= cliente.IdCliente %>',
 '<%= cliente.NombreEmpresa %>',
@@ -54,14 +53,13 @@ onclick="editarCliente(
 '<%= cliente.Telefono %>',
 '<%= cliente.Direccion %>'
 )">
-✏️ Editar
+Editar
 </button>
 
 <a
 href="/clientes/eliminar/<%= cliente.IdCliente %>"
-class="boton btn-eliminar"
-onclick="return confirm('¿Desea eliminar este cliente?')">
-🗑️ Eliminar
+class="boton">
+Eliminar
 </a>
 
 </td>
