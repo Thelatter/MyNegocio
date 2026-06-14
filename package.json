@@ -1,20 +1,21 @@
 {
   "name": "mynegocio",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Sistema Web MyNegocio",
+  "main": "servidor.js",
+  "type": "commonjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node servidor.js",
+    "dev": "node servidor.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "alert-node": "^5.0.1",
     "body-parser": "^2.2.2",
     "dotenv": "^17.4.2",
-    "ejs": "^6.0.1",
+    "ejs": "^3.1.10",
     "express": "^5.2.1",
     "mysql2": "^3.22.5",
     "pdfkit": "^0.19.1"
