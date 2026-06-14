@@ -899,8 +899,6 @@ app.get('/empleados/eliminar/:id', async (req, res) => {
 // SERVIDOR
 // ==========================
 
-
-
 app.listen(PORT, () => {
 
     console.log(
