@@ -20,7 +20,9 @@ body{
 .menu ul{
     list-style:none;
 }
-
+.tablas{
+    overflow-x: auto;
+}
 .menu > ul{
     display:flex;
 }
@@ -103,6 +105,8 @@ h1{
     background:white;
     border-radius:12px;
     overflow:auto;
+    width: 100%;
+    border-collapse: collapse;
     max-height:550px;
     box-shadow:0 4px 20px rgba(0,0,0,.08);
 }

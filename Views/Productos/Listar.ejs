@@ -19,61 +19,64 @@
     Nuevo Producto
 </button>
 </p>
-<table class="tabla-contenedor">
+<div class="tablas">
+    <table class="tabla-contenedor">
 
-<tr>
-<th>ID</th>
-<th>Producto</th>
-<th>Categoría</th>
-<th>Presentación</th>
-<th>Precio</th>
-<th>Stock</th>
-<th>Descuento</th>
-<th>Acciones</th>
-</tr>
+        <tr>
+        <th>ID</th>
+        <th>Producto</th>
+        <th>Categoría</th>
+        <th>Presentación</th>
+        <th>Precio</th>
+        <th>Stock</th>
+        <th>Descuento</th>
+        <th>Acciones</th>
+        </tr>
 
-<% Productos.forEach(producto=>{ %>
+        <% Productos.forEach(producto=>{ %>
 
-<tr>
+        <tr>
 
-<td><%= producto.IdProducto %></td>
+        <td><%= producto.IdProducto %></td>
 
-<td><%= producto.NombreProducto %></td>
+        <td><%= producto.NombreProducto %></td>
 
-<td><%= producto.NombreCategoria %></td>
+        <td><%= producto.NombreCategoria %></td>
 
-<td><%= producto.CantidadPorUnidad %></td>
+        <td><%= producto.CantidadPorUnidad %></td>
 
-<td>S/. <%= producto.PrecioUnidad %></td>
+        <td>S/. <%= producto.PrecioUnidad %></td>
 
-<td><%= producto.UnidadesEnExistencia %></td>
+        <td><%= producto.UnidadesEnExistencia %></td>
 
-<td><%= producto.Descuento %>%</td>
-<td>
+        <td><%= producto.Descuento %>%</td>
+        <td>
 
-<button
-onclick="editarProducto(
-'<%= producto.IdProducto %>',
-'<%= producto.NombreProducto %>',
-'<%= producto.CantidadPorUnidad %>',
-'<%= producto.PrecioUnidad %>',
-'<%= producto.UnidadesEnExistencia %>',
-'<%= producto.Descuento %>'
-)">
-Editar
-</button>
-|
+        <button
+        onclick="editarProducto(
+        '<%= producto.IdProducto %>',
+        '<%= producto.NombreProducto %>',
+        '<%= producto.CantidadPorUnidad %>',
+        '<%= producto.PrecioUnidad %>',
+        '<%= producto.UnidadesEnExistencia %>',
+        '<%= producto.Descuento %>'
+        )">
+        Editar
+        </button>
+        |
 
-<a href="/productos/eliminar/<%= producto.IdProducto %>">
-Eliminar
-</a>
+        <a href="/productos/eliminar/<%= producto.IdProducto %>">
+        Eliminar
+        </a>
 
-</td>
-</tr>
+        </td>
+        </tr>
 
-<% }) %>
+        <% }) %>
 
-</table>
+        </table>
+</div>
+        
 <div id="modalNuevo" class="modal">
 
 <div class="modal-contenido">
