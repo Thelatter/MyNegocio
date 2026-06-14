@@ -70,20 +70,7 @@ app.get('/contacto', (req, res) => {
 });
 
 
-app.post("/contacto", async (req, res) => {
 
-    const {
-        nombre,
-        correo,
-        asunto,
-        mensaje
-    } = req.body;
-
-    // guardar en BD
-
-    res.redirect("/contacto");
-
-});
 // ==========================
 // PRODUCTOS
 // ==========================
