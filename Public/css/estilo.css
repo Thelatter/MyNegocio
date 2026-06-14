@@ -295,3 +295,53 @@ td .boton{
     flex-wrap:wrap;
     gap:15px;
 }
+
+/* BOTONES DE ACCIONES SIN CLASES */
+
+td:last-child{
+    white-space: nowrap;
+}
+
+td:last-child button{
+    background:#f59e0b;
+    color:white;
+    border:none;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:14px;
+    transition:all .3s ease;
+    margin-right:8px;
+}
+
+td:last-child button:hover{
+    background:#d97706;
+    transform:translateY(-2px);
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+}
+
+td:last-child a{
+    background:#ef4444;
+    color:white;
+    text-decoration:none;
+    padding:8px 14px;
+    border-radius:8px;
+    display:inline-block;
+    font-weight:600;
+    font-size:14px;
+    transition:all .3s ease;
+}
+
+td:last-child a:hover{
+    background:#dc2626;
+    transform:translateY(-2px);
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+}
+
+/* CENTRAR COLUMNA DE ACCIONES */
+
+th:last-child,
+td:last-child{
+    text-align:center;
+}
