@@ -8,7 +8,7 @@
 </head>
 <body>
     <%- include('../Partials/Menu') %>
-
+<div class="tabla-contenedor">
 <h1>Reporte de Pedido</h1>
 
 <form action="/reportes/pedidos" method="POST">
@@ -27,33 +27,35 @@ Buscar
 <br>
 
 
-<table >
+        <table >
 
-<tr>
-<th>Pedido</th>
-<th>Cliente</th>
-<th>Fecha</th>
-</tr>
+    <tr>
+    <th>Pedido</th>
+    <th>Cliente</th>
+    <th>Fecha</th>
+    </tr>
 
-<% Pedidos.forEach(p=>{ %>
+    <% Pedidos.forEach(p=>{ %>
 
-<tr>
+    <tr>
 
-<td><%= p.IdPedido %></td>
+    <td><%= p.IdPedido %></td>
 
-<td><%= p.NombreEmpresa %></td>
+    <td><%= p.NombreEmpresa %></td>
 
-<td>
-<%= new Date(
-p.FechaPedido
-).toLocaleDateString('es-PE') %>
-</td>
+    <td>
+    <%= new Date(
+    p.FechaPedido
+    ).toLocaleDateString('es-PE') %>
+    </td>
 
-</tr>
+    </tr>
 
-<% }) %>
+    <% }) %>
 
-</table>
+    </table>
+
+
 
 <br>
 
@@ -95,5 +97,7 @@ Descargar PDF
 </a>
 
 <% } %>
+
+</div>
 </body>
 </html>

@@ -9,7 +9,7 @@
 </head>
 <body>
     <%- include('../Partials/Menu') %>
-
+<div class="tabla-contenedor">  
 <h1>Catálogo por Categoría</h1>
 
 <form action="/reportes/catalogo" method="POST">
@@ -35,32 +35,35 @@ Mostrar
 <br>
 
 
+ 
+    <table >
 
-<table >
+    <tr>
+    <th>ID</th>
+    <th>Producto</th>
+    <th>Precio</th>
+    <th>Stock</th>
+    <th>Descuento</th>
+    </tr>
 
-<tr>
-<th>ID</th>
-<th>Producto</th>
-<th>Precio</th>
-<th>Stock</th>
-<th>Descuento</th>
-</tr>
+    <% Productos.forEach(p=>{ %>
 
-<% Productos.forEach(p=>{ %>
+    <tr>
 
-<tr>
+    <td><%= p.IdProducto %></td>
+    <td><%= p.NombreProducto %></td>
+    <td><%= p.PrecioUnidad %></td>
+    <td><%= p.UnidadesEnExistencia %></td>
+    <td><%= p.Descuento %>%</td>
 
-<td><%= p.IdProducto %></td>
-<td><%= p.NombreProducto %></td>
-<td><%= p.PrecioUnidad %></td>
-<td><%= p.UnidadesEnExistencia %></td>
-<td><%= p.Descuento %>%</td>
+    </tr>
 
-</tr>
+    <% }) %>
 
-<% }) %>
+    </table>
 
-</table>
+
+
 
 <% if(Productos.length>0){ %>
 
@@ -71,5 +74,6 @@ Descargar PDF
 </a>
 
 <% } %>
+</div>
 </body>
 </html>
