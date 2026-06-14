@@ -105,7 +105,7 @@ h1{
     background:white;
     border-radius:12px;
     overflow:auto;
-    width: 70%;
+    width: 100%;
     margin: auto;
     border-collapse: collapse;
     max-height:550px;
