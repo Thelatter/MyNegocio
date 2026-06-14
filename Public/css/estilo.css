@@ -372,3 +372,37 @@ p button:hover{
 p button:active{
     transform:translateY(0);
 }
+
+.link{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+
+    background:#dc2626;
+    color:white;
+
+    text-decoration:none;
+
+    padding:12px 20px;
+
+    border-radius:8px;
+
+    font-size:15px;
+    font-weight:600;
+
+    box-shadow:0 4px 10px rgba(220,38,38,.25);
+
+    transition:all .3s ease;
+}
+
+.link:hover{
+    background:#b91c1c;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 6px 15px rgba(220,38,38,.35);
+}
+
+.link:active{
+    transform:translateY(0);
+}
