@@ -5,8 +5,7 @@
   "main": "servidor.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node servidor.js",
-    "dev": "node servidor.js"
+    "start": "node servidor.js"
   },
   "keywords": [],
   "author": "",
