@@ -476,3 +476,109 @@ p button:active{
 .rep:focus{
     outline:none;
 }
+
+/* FORMULARIO DE CONTACTO */
+
+.form-contacto{
+
+    background:white;
+
+    max-width:700px;
+
+    margin:30px auto;
+
+    padding:30px;
+
+    border-radius:15px;
+
+    box-shadow:0 4px 20px rgba(0,0,0,.08);
+
+}
+
+.form-contacto h2{
+
+    margin-bottom:20px;
+
+    color:#1e293b;
+
+    text-align:center;
+
+}
+
+.form-contacto label{
+
+    display:block;
+
+    margin-bottom:6px;
+
+    font-weight:600;
+
+    color:#374151;
+
+}
+
+.form-contacto input,
+.form-contacto textarea{
+
+    width:100%;
+
+    padding:12px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:8px;
+
+    margin-bottom:15px;
+
+    font-size:15px;
+
+    transition:.3s;
+}
+
+.form-contacto input:focus,
+.form-contacto textarea:focus{
+
+    outline:none;
+
+    border-color:#2563eb;
+
+    box-shadow:0 0 0 3px rgba(37,99,235,.15);
+
+}
+
+.form-contacto textarea{
+
+    resize:vertical;
+
+    min-height:120px;
+}
+
+.form-contacto button{
+
+    width:100%;
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    padding:14px;
+
+    border-radius:8px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.form-contacto button:hover{
+
+    background:#1d4ed8;
+
+    transform:translateY(-2px);
+}

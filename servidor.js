@@ -6,7 +6,7 @@ const PDFDocument = require('pdfkit');
 require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
-
+const nodemailer = require("nodemailer");
 
 
 
@@ -69,6 +69,21 @@ app.get('/contacto', (req, res) => {
     res.render('Contacto');
 });
 
+
+app.post("/contacto", async (req, res) => {
+
+    const {
+        nombre,
+        correo,
+        asunto,
+        mensaje
+    } = req.body;
+
+    // guardar en BD
+
+    res.redirect("/contacto");
+
+});
 // ==========================
 // PRODUCTOS
 // ==========================
