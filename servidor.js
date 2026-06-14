@@ -31,14 +31,14 @@ const conexion = mysql.createPool({
 });
 
 //const pool = mysql.createPool({
-    host: 'localhost',
-    port: 3307,
-    user: 'root',
-    password: '12345',
-    database: 'bdmynegocio',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+ //   host: 'localhost',
+ //   port: 3307,
+  //  user: 'root',
+  //  password: '12345',
+  //  database: 'bdmynegocio',
+   // waitForConnections: true,
+   // connectionLimit: 10,
+   // queueLimit: 0
 //});
 
 (async () => {
