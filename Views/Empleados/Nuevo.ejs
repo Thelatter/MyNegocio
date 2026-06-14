@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Nuevo Empleado</title>
+<link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+
+<%- include('../Partials/Menu') %>
+
+<div class="contenedor">
+
+<h1>Nuevo Empleado</h1>
+
+<form action="/empleados/nuevo" method="POST">
+
+<p>Nombres</p>
+<input type="text" name="Nombres" required>
+
+<p>Apellidos</p>
+<input type="text" name="Apellidos" required>
+
+<p>Cargo</p>
+<input type="text" name="Cargo" required>
+
+<p>Teléfono</p>
+<input type="text" name="Telefono">
+
+<br><br>
+
+<button type="submit">
+Guardar
+</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

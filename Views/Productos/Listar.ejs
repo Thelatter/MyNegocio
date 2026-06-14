@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Productos</title>
+
+<link rel="stylesheet" href="/css/estilo.css">
+
+</head>
+<body>
+
+<%- include('../Partials/Menu') %>
+
+<div class="contenedor">
+
+<h1>Listado de Productos</h1>
+<p>
+    <button onclick="abrirNuevo()">
+    Nuevo Producto
+</button>
+</p>
+<table>
+
+<tr>
+<th>ID</th>
+<th>Producto</th>
+<th>Categoría</th>
+<th>Presentación</th>
+<th>Precio</th>
+<th>Stock</th>
+<th>Descuento</th>
+<th>Acciones</th>
+</tr>
+
+<% Productos.forEach(producto=>{ %>
+
+<tr>
+
+<td><%= producto.IdProducto %></td>
+
+<td><%= producto.NombreProducto %></td>
+
+<td><%= producto.NombreCategoria %></td>
+
+<td><%= producto.CantidadPorUnidad %></td>
+
+<td>S/. <%= producto.PrecioUnidad %></td>
+
+<td><%= producto.UnidadesEnExistencia %></td>
+
+<td><%= producto.Descuento %>%</td>
+<td>
+
+<button
+onclick="editarProducto(
+'<%= producto.IdProducto %>',
+'<%= producto.NombreProducto %>',
+'<%= producto.CantidadPorUnidad %>',
+'<%= producto.PrecioUnidad %>',
+'<%= producto.UnidadesEnExistencia %>',
+'<%= producto.Descuento %>'
+)">
+Editar
+</button>
+|
+
+<a href="/productos/eliminar/<%= producto.IdProducto %>">
+Eliminar
+</a>
+
+</td>
+</tr>
+
+<% }) %>
+
+</table>
+<div id="modalNuevo" class="modal">
+
+<div class="modal-contenido">
+
+<h2>Nuevo Producto</h2>
+
+<form action="/productos/nuevo" method="POST">
+
+<input
+type="text"
+name="NombreProducto"
+placeholder="Nombre Producto"
+required>
+
+<br><br>
+
+<input
+type="text"
+name="CantidadPorUnidad"
+placeholder="Presentación"
+required>
+
+<br><br>
+
+<input
+type="number"
+step="0.01"
+name="PrecioUnidad"
+placeholder="Precio"
+required>
+
+<br><br>
+
+<input
+type="number"
+name="UnidadesEnExistencia"
+placeholder="Stock"
+required>
+
+<br><br>
+
+<input
+type="number"
+step="0.01"
+name="Descuento"
+placeholder="Descuento">
+
+<br><br>
+
+<select name="IdCategoria">
+
+<% Categorias.forEach(function(cat){ %>
+
+<option value="<%= cat.IdCategoria %>">
+<%= cat.NombreCategoria %>
+</option>
+
+<% }) %>
+
+</select>
+
+<br><br>
+
+<button type="submit">
+Guardar
+</button>
+
+<button
+type="button"
+onclick="cerrarNuevo()">
+Cancelar
+</button>
+
+</form>
+
+</div>
+
+</div>
+</div>
+<script>
+
+function abrirNuevo() {
+
+    document
+    .getElementById('modalNuevo')
+    .style.display='block';
+
+}
+
+function cerrarNuevo() {
+
+    document
+    .getElementById('modalNuevo')
+    .style.display='none';
+
+}
+
+</script>
+</body>
+</html>

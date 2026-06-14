@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Nuevo Cliente</title>
+<link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+
+<%- include('../Partials/Menu') %>
+
+<div class="contenedor">
+
+<h1>Nuevo Cliente</h1>
+
+<form action="/clientes/nuevo" method="POST">
+
+<label>Nombre Empresa</label>
+<br><br>
+
+<label>Empresa</label>
+<input type="text" name="NombreEmpresa" required>
+
+<br><br>
+
+<label>Contacto</label>
+<input type="text" name="Contacto">
+
+<br><br>
+
+<label>Telefono</label>
+<input type="text" name="Telefono">
+
+<br><br>
+
+<label>Direccion</label>
+<input type="text" name="Direccion">
+
+<br><br>
+
+<button type="submit">
+Guardar
+</button>
+<br><br>
+
+
+
+</form>
+
+</div>
+
+</body>
+</html>

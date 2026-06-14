@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Clientes</title>
+
+<link rel="stylesheet" href="/css/estilo.css">
+
+</head>
+<body>
+
+<%- include('../Partials/Menu') %>
+
+<div class="contenedor">
+
+<h1>Clientes</h1>
+
+<p>
+<button type="button" onclick="abrirCliente()">
+    Nuevo Cliente
+</button>
+</p>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Empresa</th>
+<th>Contacto</th>
+<th>Telefono</th>
+<th>Direccion</th>
+<th>Acciones</th>
+</tr>
+
+<% Clientes.forEach(function(cliente){ %>
+
+<tr>
+
+<td><%= cliente.IdCliente %></td>
+<td><%= cliente.NombreEmpresa %></td>
+<td><%= cliente.Contacto %></td>
+<td><%= cliente.Telefono %></td>
+<td><%= cliente.Direccion %></td>
+
+<td>
+
+<button
+type="button"
+onclick="editarCliente(
+'<%= cliente.IdCliente %>',
+'<%= cliente.NombreEmpresa %>',
+'<%= cliente.Contacto %>',
+'<%= cliente.Telefono %>',
+'<%= cliente.Direccion %>'
+)">
+Editar
+</button>
+
+<a
+href="/clientes/eliminar/<%= cliente.IdCliente %>"
+class="boton">
+Eliminar
+</a>
+
+</td>
+
+</tr>
+
+<% }) %>
+
+</table>
+
+</div>
+
+<!-- MODAL NUEVO CLIENTE -->
+
+<div id="modalCliente" class="modal">
+
+<div class="modal-contenido">
+
+<h2>Nuevo Cliente</h2>
+
+<form action="/clientes/nuevo" method="POST">
+
+<p>Empresa</p>
+<input type="text" name="NombreEmpresa" required>
+
+<p>Contacto</p>
+<input type="text" name="Contacto">
+
+<p>Telefono</p>
+<input type="text" name="Telefono">
+
+<p>Direccion</p>
+<input type="text" name="Direccion">
+
+<br><br>
+
+<button type="submit">
+Guardar
+</button>
+
+<button
+type="button"
+onclick="cerrarCliente()">
+Cancelar
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+<!-- MODAL EDITAR CLIENTE -->
+
+<div id="modalEditarCliente" class="modal">
+
+<div class="modal-contenido">
+
+<h2>Editar Cliente</h2>
+
+<form
+id="formEditarCliente"
+method="POST">
+
+<p>Empresa</p>
+<input
+type="text"
+id="editNombreEmpresa"
+name="NombreEmpresa"
+required>
+
+<p>Contacto</p>
+<input
+type="text"
+id="editContacto"
+name="Contacto">
+
+<p>Telefono</p>
+<input
+type="text"
+id="editTelefono"
+name="Telefono">
+
+<p>Direccion</p>
+<input
+type="text"
+id="editDireccion"
+name="Direccion">
+
+<br><br>
+
+<button type="submit">
+Actualizar
+</button>
+
+<button
+type="button"
+onclick="cerrarEditarCliente()">
+Cancelar
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+
+function abrirCliente() {
+    document.getElementById('modalCliente').style.display = 'block';
+}
+
+function cerrarCliente() {
+    document.getElementById('modalCliente').style.display = 'none';
+}
+
+function editarCliente(
+    id,
+    empresa,
+    contacto,
+    telefono,
+    direccion
+) {
+
+    document.getElementById('formEditarCliente').action =
+        '/clientes/editar/' + id;
+
+    document.getElementById('editNombreEmpresa').value = empresa;
+    document.getElementById('editContacto').value = contacto;
+    document.getElementById('editTelefono').value = telefono;
+    document.getElementById('editDireccion').value = direccion;
+
+    document.getElementById('modalEditarCliente').style.display = 'block';
+}
+
+function cerrarEditarCliente() {
+    document.getElementById('modalEditarCliente').style.display = 'none';
+}
+
+window.onclick = function(event) {
+
+    if (event.target == document.getElementById('modalCliente')) {
+        cerrarCliente();
+    }
+
+    if (event.target == document.getElementById('modalEditarCliente')) {
+        cerrarEditarCliente();
+    }
+}
+
+</script>
+
+</body>
+</html>

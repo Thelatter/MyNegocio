@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Pedidos</title>
+    <link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+    <%- include('../Partials/Menu') %>
+
+<h1>Reporte de Pedido</h1>
+
+<form action="/reportes/pedidos" method="POST">
+
+<input
+type="text"
+name="texto"
+placeholder="Buscar por código o cliente">
+
+<button type="submit">
+Buscar
+</button>
+
+</form>
+
+<br>
+
+<table>
+
+<tr>
+<th>Pedido</th>
+<th>Cliente</th>
+<th>Fecha</th>
+</tr>
+
+<% Pedidos.forEach(p=>{ %>
+
+<tr>
+
+<td><%= p.IdPedido %></td>
+
+<td><%= p.NombreEmpresa %></td>
+
+<td>
+<%= new Date(
+p.FechaPedido
+).toLocaleDateString('es-PE') %>
+</td>
+
+</tr>
+
+<% }) %>
+
+</table>
+
+<br>
+
+<h2>Detalle</h2>
+
+<table>
+
+<tr>
+<th>Producto</th>
+<th>Cantidad</th>
+<th>Precio</th>
+<th>Importe</th>
+</tr>
+
+<% Detalles.forEach(d=>{ %>
+
+<tr>
+
+<td><%= d.NombreProducto %></td>
+
+<td><%= d.Cantidad %></td>
+
+<td><%= d.PrecioUnidad %></td>
+
+<td><%= d.Importe %></td>
+
+</tr>
+
+<% }) %>
+
+</table>
+
+<% if(Pedidos.length>0){ %>
+
+<br>
+
+<a href="/reportes/pedidos/pdf/<%= Pedidos[0].IdPedido %>">
+Descargar PDF
+</a>
+
+<% } %>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Editar Empleado</title>
+<link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+
+<%- include('../Partials/Menu') %>
+
+<div class="contenedor">
+
+<h1>Editar Empleado</h1>
+
+<form
+action="/empleados/editar/<%= Empleado.IdEmpleado %>"
+method="POST">
+
+<p>Nombres</p>
+<input
+type="text"
+name="Nombres"
+value="<%= Empleado.Nombres %>">
+
+<p>Apellidos</p>
+<input
+type="text"
+name="Apellidos"
+value="<%= Empleado.Apellidos %>">
+
+<p>Cargo</p>
+<input
+type="text"
+name="Cargo"
+value="<%= Empleado.Cargo %>">
+
+<p>Teléfono</p>
+<input
+type="text"
+name="Telefono"
+value="<%= Empleado.Telefono %>">
+
+<br><br>
+
+<button type="submit">
+Actualizar
+</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

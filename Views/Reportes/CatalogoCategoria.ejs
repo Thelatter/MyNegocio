@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte</title>
+    <link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+    <%- include('../Partials/Menu') %>
+
+<h1>Catálogo por Categoría</h1>
+
+<form action="/reportes/catalogo" method="POST">
+
+<select name="IdCategoria">
+
+<% Categorias.forEach(cat=>{ %>
+
+<option value="<%= cat.IdCategoria %>">
+<%= cat.NombreCategoria %>
+</option>
+
+<% }) %>
+
+</select>
+
+<button type="submit">
+Mostrar
+</button>
+
+</form>
+
+<br>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Producto</th>
+<th>Precio</th>
+<th>Stock</th>
+<th>Descuento</th>
+</tr>
+
+<% Productos.forEach(p=>{ %>
+
+<tr>
+
+<td><%= p.IdProducto %></td>
+<td><%= p.NombreProducto %></td>
+<td><%= p.PrecioUnidad %></td>
+<td><%= p.UnidadesEnExistencia %></td>
+<td><%= p.Descuento %>%</td>
+
+</tr>
+
+<% }) %>
+
+</table>
+
+<% if(Productos.length>0){ %>
+
+<br>
+
+<a href="/reportes/catalogo/pdf/<%= Productos[0].IdCategoria %>">
+Descargar PDF
+</a>
+
+<% } %>
+</body>
+</html>

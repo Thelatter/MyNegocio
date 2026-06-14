@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+
+<title>Editar Cliente</title>
+
+<link rel="stylesheet" href="/css/estilo.css">
+
+</head>
+<body>
+
+<%- include('../Partials/Menu') %>
+
+<div class="contenedor">
+
+<h1>Editar Cliente</h1>
+
+<form
+action="/clientes/editar/<%= Cliente.IdCliente %>"
+method="POST">
+
+<label>Empresa</label>
+<input
+type="text"
+name="NombreEmpresa"
+value="<%= Cliente.NombreEmpresa %>">
+
+<br><br>
+
+<label>Contacto</label>
+<input
+type="text"
+name="Contacto"
+value="<%= Cliente.Contacto %>">
+
+<br><br>
+
+<label>Telefono</label>
+<input
+type="text"
+name="Telefono"
+value="<%= Cliente.Telefono %>">
+
+<br><br>
+
+<label>Direccion</label>
+<input
+type="text"
+name="Direccion"
+value="<%= Cliente.Direccion %>">
+
+<br><br>
+
+<button type="submit">
+Actualizar
+</button>
+
+<br><br>
+
+
+</form>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Empleados</title>
+
+<link rel="stylesheet" href="/css/estilo.css">
+
+</head>
+<body>
+
+<%- include('../Partials/Menu') %>
+
+<div class="contenedor">
+
+<h1>Listado de Empleados</h1>
+
+<p>
+<button type="button" onclick="abrirEmpleado()">
+    Nuevo Empleado
+</button>
+</p>
+
+<table>
+
+<tr>
+    <th>ID</th>
+    <th>Nombres</th>
+    <th>Apellidos</th>
+    <th>Cargo</th>
+    <th>Teléfono</th>
+    <th>Acciones</th>
+</tr>
+
+<% Empleados.forEach(function(emp){ %>
+
+<tr>
+
+<td><%= emp.IdEmpleado %></td>
+
+<td><%= emp.Nombres %></td>
+
+<td><%= emp.Apellidos %></td>
+
+<td><%= emp.Cargo %></td>
+
+<td><%= emp.Telefono %></td>
+
+<td>
+
+<button
+type="button"
+onclick="editarEmpleado(
+'<%= emp.IdEmpleado %>',
+'<%= emp.Nombres %>',
+'<%= emp.Apellidos %>',
+'<%= emp.Cargo %>',
+'<%= emp.Telefono %>'
+)">
+Editar
+</button>
+
+|
+
+<a href="/empleados/eliminar/<%= emp.IdEmpleado %>">
+Eliminar
+</a>
+
+</td>
+
+</tr>
+
+<% }) %>
+
+</table>
+
+</div>
+
+<!-- MODAL NUEVO EMPLEADO -->
+
+<div id="modalEmpleado" class="modal">
+
+<div class="modal-contenido">
+
+<h2>Nuevo Empleado</h2>
+
+<form action="/empleados/nuevo" method="POST">
+
+<p>Nombres</p>
+<input type="text" name="Nombres" required>
+
+<p>Apellidos</p>
+<input type="text" name="Apellidos" required>
+
+<p>Cargo</p>
+<input type="text" name="Cargo" required>
+
+<p>Telefono</p>
+<input type="text" name="Telefono">
+
+<br><br>
+
+<button type="submit">
+Guardar
+</button>
+
+<button
+type="button"
+onclick="cerrarEmpleado()">
+Cancelar
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+<!-- MODAL EDITAR EMPLEADO -->
+
+<div id="modalEditarEmpleado" class="modal">
+
+<div class="modal-contenido">
+
+<h2>Editar Empleado</h2>
+
+<form
+id="formEditarEmpleado"
+method="POST">
+
+<p>Nombres</p>
+<input
+type="text"
+id="editNombres"
+name="Nombres"
+required>
+
+<p>Apellidos</p>
+<input
+type="text"
+id="editApellidos"
+name="Apellidos"
+required>
+
+<p>Cargo</p>
+<input
+type="text"
+id="editCargo"
+name="Cargo"
+required>
+
+<p>Telefono</p>
+<input
+type="text"
+id="editTelefono"
+name="Telefono">
+
+<br><br>
+
+<button type="submit">
+Actualizar
+</button>
+
+<button
+type="button"
+onclick="cerrarEditarEmpleado()">
+Cancelar
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+
+function abrirEmpleado() {
+    document.getElementById('modalEmpleado').style.display = 'block';
+}
+
+function cerrarEmpleado() {
+    document.getElementById('modalEmpleado').style.display = 'none';
+}
+
+function editarEmpleado(
+    id,
+    nombres,
+    apellidos,
+    cargo,
+    telefono
+) {
+
+    document.getElementById('formEditarEmpleado').action =
+        '/empleados/editar/' + id;
+
+    document.getElementById('editNombres').value = nombres;
+    document.getElementById('editApellidos').value = apellidos;
+    document.getElementById('editCargo').value = cargo;
+    document.getElementById('editTelefono').value = telefono;
+
+    document.getElementById('modalEditarEmpleado').style.display = 'block';
+}
+
+function cerrarEditarEmpleado() {
+    document.getElementById('modalEditarEmpleado').style.display = 'none';
+}
+
+window.onclick = function(event) {
+
+    if (event.target == document.getElementById('modalEmpleado')) {
+        cerrarEmpleado();
+    }
+
+    if (event.target == document.getElementById('modalEditarEmpleado')) {
+        cerrarEditarEmpleado();
+    }
+
+}
+
+</script>
+
+</body>
+</html>

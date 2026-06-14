@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Buscar Pedido</title>
+
+<link rel="stylesheet" href="/css/estilo.css">
+
+</head>
+<body>
+
+<%- include('../Partials/Menu') %>
+
+<div class="contenedor">
+
+<h1>Buscar Pedido</h1>
+
+<form action="/pedidos/buscar" method="POST">
+
+<input
+type="text"
+name="textoBusqueda"
+placeholder="Buscar por código o cliente">
+
+<button type="submit">
+Buscar
+</button>
+
+</form>
+
+<br>
+
+<h2>Pedidos</h2>
+
+<table>
+
+<tr>
+<th>Código</th>
+<th>Cliente</th>
+<th>Fecha</th>
+</tr>
+
+<% Pedidos.forEach(function(pedido){ %>
+
+<tr>
+
+<td><%= pedido.IdPedido %></td>
+
+<td><%= pedido.NombreEmpresa %></td>
+
+<td>
+<%= new Date(pedido.FechaPedido).toLocaleDateString(
+'es-PE',
+{
+day:'2-digit',
+month:'2-digit',
+year:'numeric'
+}
+) %>
+</td>
+</tr>
+
+<% }) %>
+
+</table>
+
+<br>
+
+<h2>Detalle del Pedido</h2>
+
+<table>
+
+<tr>
+<th>Producto</th>
+<th>Cantidad</th>
+<th>Precio</th>
+<th>Importe</th>
+</tr>
+
+<% Detalles.forEach(function(det){ %>
+
+<tr>
+
+<td><%= det.NombreProducto %></td>
+
+<td><%= det.Cantidad %></td>
+
+<td>S/. <%= det.PrecioUnidad %></td>
+
+<td>S/. <%= det.Importe %></td>
+
+</tr>
+
+<% }) %>
+
+</table>
+
+</div>
+
+</body>
+</html>

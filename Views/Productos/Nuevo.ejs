@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Nuevo Producto</title>
+
+<link rel="stylesheet" href="/css/estilo.css">
+
+</head>
+<body>
+
+<%- include('../Partials/Menu') %>
+
+<div class="contenedor">
+
+<h1>Nuevo Producto</h1>
+
+<form action="/productos/nuevo" method="POST">
+
+<p>Nombre Producto</p>
+<input
+type="text"
+name="NombreProducto"
+required>
+
+<p>Presentación</p>
+<input
+type="text"
+name="CantidadPorUnidad"
+required>
+
+<p>Precio</p>
+<input
+type="number"
+step="0.01"
+name="PrecioUnidad"
+required>
+
+<p>Stock</p>
+<input
+type="number"
+name="UnidadesEnExistencia"
+required>
+
+<p>Descuento (%)</p>
+<input
+type="number"
+step="0.01"
+name="Descuento"
+value="0">
+
+<p>Categoría</p>
+
+<select name="IdCategoria" required>
+
+<% Categorias.forEach(function(cat){ %>
+
+<option value="<%= cat.IdCategoria %>">
+    <%= cat.NombreCategoria %>
+</option>
+
+<% }) %>
+
+</select>
+
+<br><br>
+
+<button type="submit">
+Guardar Producto
+</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Categorias</title>
+    <link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+    <%- include('../Partials/Menu') %>
+
+<h1>Reporte Categorías</h1>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>Categoría</th>
+<th>Total Productos</th>
+</tr>
+
+<% Categorias.forEach(cat=>{ %>
+
+<tr>
+
+<td><%= cat.IdCategoria %></td>
+<td><%= cat.NombreCategoria %></td>
+<td><%= cat.TotalProductos %></td>
+
+</tr>
+
+<% }) %>
+
+</table>
+
+<br>
+
+<a href="/reportes/categorias/pdf">
+Descargar PDF
+</a>
+</body>
+</html>
