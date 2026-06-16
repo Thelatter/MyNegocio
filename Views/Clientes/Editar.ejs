@@ -53,6 +53,23 @@ value="<%= Cliente.Direccion %>">
 
 <br><br>
 
+<label>País</label>
+
+<select name="IdPais">
+
+<% Paises.forEach(p=>{ %>
+
+<option
+value="<%= p.IdPais %>"
+<%= Cliente.IdPais == p.IdPais ? 'selected' : '' %>>
+<%= p.NombrePais %>
+</option>
+
+<% }) %>
+
+</select>
+
+<br><br>
 <button type="submit">
 Actualizar
 </button>
