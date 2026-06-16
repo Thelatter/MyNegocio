@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>
+Detalle Pedido
+</title>
+
+<link
+rel="stylesheet"
+href="/css/estilo.css">
+
+</head>
+
+<body>
+
+<%- include('../Partials/Menu') %>
+
+<div class="contenedor">
+
+<div class="factura">
+
+<div class="factura-header">
+
+<h1>
+Pedido #<%= Pedido.IdPedido %>
+</h1>
+
+<button
+onclick="window.print()"
+class="btn-imprimir">
+
+🖨 Imprimir
+
+</button>
+
+</div>
+
+<div class="datos-pedido">
+
+<div>
+
+<strong>Cliente</strong>
+
+<p>
+<%= Pedido.NombreEmpresa %>
+</p>
+
+</div>
+
+<div>
+
+<strong>Empleado</strong>
+
+<p>
+<%= Pedido.Nombres %>
+<%= Pedido.Apellidos %>
+</p>
+
+</div>
+
+<div>
+
+<strong>Fecha</strong>
+
+<p>
+<%= new Date(
+Pedido.FechaPedido
+).toLocaleDateString('es-PE') %>
+</p>
+
+</div>
+
+</div>
+
+<div class="tabla-contenedor">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Producto</th>
+<th>Cantidad</th>
+<th>Precio</th>
+<th>Descuento</th>
+<th>Importe</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<%
+let total = 0;
+%>
+
+<% Detalles.forEach(d=>{
+
+total += Number(d.Importe);
+
+%>
+
+<tr>
+
+<td>
+<%= d.NombreProducto %>
+</td>
+
+<td>
+<%= d.Cantidad %>
+</td>
+
+<td>
+S/. <%= d.PrecioUnidad %>
+</td>
+
+<td>
+<%= d.Descuento %>
+</td>
+
+<td>
+S/. <%= Number(d.Importe).toFixed(2) %>
+</td>
+
+</tr>
+
+<% }) %>
+
+</tbody>
+
+</table>
+
+</div>
+
+<div class="total-pedido">
+
+TOTAL:
+S/. <%= total.toFixed(2) %>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

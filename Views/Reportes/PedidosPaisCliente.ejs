@@ -119,15 +119,17 @@ class="pedido-link">
 </td>
 
 <td>
-<%= p.Nombres %>
-<%= p.Apellidos %>
-</td>
-
-<td>
 <%= new Date(
 p.FechaEntrega
 ).toLocaleDateString('es-PE') %>
 </td>
+
+<td>
+<%= p.Nombres %>
+<%= p.Apellidos %>
+</td>
+
+
 
 </tr>
 

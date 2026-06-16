@@ -1031,6 +1031,68 @@ app.get('/prueba123', (req,res)=>{
     res.send('RUTA NUEVA FUNCIONANDO');
 });
 
+
+// ==========================
+// DETALLE PEDIDO
+// ==========================
+
+app.get(
+'/pedido/detalle/:id',
+async (req,res)=>{
+
+    const id = req.params.id;
+
+    const [Pedido] =
+    await pool.query(
+    `
+    SELECT
+        p.IdPedido,
+        p.FechaPedido,
+        c.NombreEmpresa,
+        e.Nombres,
+        e.Apellidos
+    FROM pedido p
+    INNER JOIN cliente c
+        ON p.IdCliente = c.IdCliente
+    INNER JOIN empleado e
+        ON p.IdEmpleado = e.IdEmpleado
+    WHERE p.IdPedido = ?
+    `,
+    [id]
+    );
+
+    const [Detalles] =
+    await pool.query(
+    `
+    SELECT
+        d.IdProducto,
+        pr.NombreProducto,
+        d.Cantidad,
+        d.PrecioUnidad,
+        d.Descuento,
+        (
+            d.Cantidad *
+            d.PrecioUnidad *
+            (1-d.Descuento)
+        ) AS Importe
+    FROM detalles_de_pedido d
+    INNER JOIN producto pr
+        ON d.IdProducto = pr.IdProducto
+    WHERE d.IdPedido = ?
+    `,
+    [id]
+    );
+
+    res.render(
+        'Reportes/DetallePedido',
+        {
+            Pedido: Pedido[0],
+            Detalles
+        }
+    );
+
+});
+
 // ==========================
 // SERVIDOR
 // ==========================
