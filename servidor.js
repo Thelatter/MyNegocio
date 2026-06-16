@@ -967,56 +967,62 @@ async (req,res)=>{
 app.post(
 '/reportes/pedidos-pais-cliente',
 async (req,res)=>{
+    try{
+        const IdPais =
+            req.body.IdPais;
 
-    const IdPais =
-    req.body.IdPais;
+            const IdCliente =
+            req.body.IdCliente;
 
-    const IdCliente =
-    req.body.IdCliente;
+            const [Paises] =
+            await pool.query(`
+                SELECT *
+                FROM pais
+            `);
 
-    const [Paises] =
-    await pool.query(`
-        SELECT *
-        FROM pais
-    `);
+            const [Clientes] =
+            await pool.query(
+            `
+            SELECT *
+            FROM cliente
+            WHERE IdPais=?
+            `,
+            [IdPais]
+            );
 
-    const [Clientes] =
-    await pool.query(
-    `
-    SELECT *
-    FROM cliente
-    WHERE IdPais=?
-    `,
-    [IdPais]
-    );
+            const [Pedidos] =
+            await pool.query(
+            `
+            SELECT
+                p.IdPedido,
+                p.FechaPedido,
+                p.FechaEntrega,
+                e.Nombres,
+                e.Apellidos
+            FROM pedido p
+            INNER JOIN empleado e
+            ON p.IdEmpleado=e.IdEmpleado
+            WHERE p.IdCliente=?
+            `,
+            [IdCliente]
+            );
 
-    const [Pedidos] =
-    await pool.query(
-    `
-    SELECT
-        p.IdPedido,
-        p.FechaPedido,
-        p.FechaEntrega,
-        e.Nombres,
-        e.Apellidos
-    FROM pedido p
-    INNER JOIN empleado e
-    ON p.IdEmpleado=e.IdEmpleado
-    WHERE p.IdCliente=?
-    `,
-    [IdCliente]
-    );
+            res.render(
+                'Reportes/PedidosPaisCliente',
+                {
+                    Paises,
+                    Clientes,
+                    Pedidos,
+                    IdPais,
+                    IdCliente
+                }
+            );
+    }catch(error){
+        console.log(error);
 
-    res.render(
-        'Reportes/PedidosPaisCliente',
-        {
-            Paises,
-            Clientes,
-            Pedidos,
-            IdPais,
-            IdCliente
-        }
-    );
+    res.send(error.message);
+    }
+    
 
 });
 
