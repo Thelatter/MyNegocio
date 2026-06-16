@@ -100,7 +100,21 @@ Eliminar
 <input type="text" name="Direccion">
 
 <br><br>
+<p>País</p>
 
+<select
+id="editPais"
+name="IdPais">
+
+<% Paises.forEach(p=>{ %>
+
+<option value="<%= p.IdPais %>">
+    <%= p.NombrePais %>
+</option>
+
+<% }) %>
+
+</select>
 <button type="submit" class="popup">
 Guardar
 </button>
@@ -156,12 +170,15 @@ name="Direccion">
 
 <br><br>
 
-<button type="submit">
+<button
+type="submit"
+class="popup">
 Actualizar
 </button>
 
 <button
 type="button"
+class="popup"
 onclick="cerrarEditarCliente()">
 Cancelar
 </button>
@@ -187,7 +204,8 @@ function editarCliente(
     empresa,
     contacto,
     telefono,
-    direccion
+    direccion,
+    idPais
 ) {
 
     document.getElementById('formEditarCliente').action =
@@ -197,6 +215,8 @@ function editarCliente(
     document.getElementById('editContacto').value = contacto;
     document.getElementById('editTelefono').value = telefono;
     document.getElementById('editDireccion').value = direccion;
+
+    document.getElementById('editPais').value = idPais;
 
     document.getElementById('modalEditarCliente').style.display = 'block';
 }
