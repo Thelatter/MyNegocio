@@ -1019,9 +1019,16 @@ async (req,res)=>{
     );
 
 });
+
+
+app.get('/prueba123', (req,res)=>{
+    res.send('RUTA NUEVA FUNCIONANDO');
+});
+
 // ==========================
 // SERVIDOR
 // ==========================
+
 
 app.listen(PORT, () => {
 
