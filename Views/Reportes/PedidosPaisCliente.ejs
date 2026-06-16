@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>
+Pedidos por País y Cliente
+</title>
+
+<link
+rel="stylesheet"
+href="/css/estilo.css">
+
+</head>
+
+<body>
+
+<%- include('../Partials/Menu') %>
+
+<div class="contenedor">
+
+<h1>
+Pedidos por País y Cliente
+</h1>
+
+<form
+action="/reportes/pedidos-pais-cliente"
+method="POST"
+class="form-reporte">
+
+<div class="grupo-form">
+
+<label>🌎 País</label>
+
+<select
+id="pais"
+name="IdPais">
+
+<option value="">
+Seleccione un país
+</option>
+
+<% Paises.forEach(p=>{ %>
+
+<option value="<%= p.IdPais %>">
+<%= p.NombrePais %>
+</option>
+
+<% }) %>
+
+</select>
+
+</div>
+
+<div class="grupo-form">
+
+<label>🏢 Cliente</label>
+
+<select
+id="cliente"
+name="IdCliente">
+
+<option value="">
+Seleccione un cliente
+</option>
+
+</select>
+
+</div>
+
+<button
+type="submit"
+class="rep">
+
+🔍 Ver Pedidos
+
+</button>
+
+</form>
+
+<br>
+
+
+<div class="tabla-contenedor">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID Pedido</th>
+<th>Fecha Pedido</th>
+<th>Empleado</th>
+<th>Fecha Entrega</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<% Pedidos.forEach(p=>{ %>
+
+<tr>
+
+<td>
+
+<a
+href="/pedido/detalle/<%= p.IdPedido %>"
+class="pedido-link">
+
+#<%= p.IdPedido %>
+
+</a>
+
+</td>
+
+<td>
+<%= new Date(
+p.FechaPedido
+).toLocaleDateString('es-PE') %>
+</td>
+
+<td>
+<%= p.Nombres %>
+<%= p.Apellidos %>
+</td>
+
+<td>
+<%= new Date(
+p.FechaEntrega
+).toLocaleDateString('es-PE') %>
+</td>
+
+</tr>
+
+<% }) %>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+document
+.getElementById('pais')
+.addEventListener(
+'change',
+async function(){
+
+const id=this.value;
+
+const r=
+await fetch(
+'/clientes-por-pais/'+id
+);
+
+const clientes=
+await r.json();
+
+const combo=
+document.getElementById(
+'cliente'
+);
+
+combo.innerHTML='';
+
+clientes.forEach(c=>{
+
+combo.innerHTML += `
+<option value="${c.IdCliente}">
+${c.NombreEmpresa}
+</option>
+`;
+
+});
+
+});
+
+</script>
+
+</body>
+
+</html>

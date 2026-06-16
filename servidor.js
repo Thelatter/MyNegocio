@@ -918,12 +918,107 @@ app.get('/empleados/eliminar/:id', async (req, res) => {
     res.redirect('/empleados');
 
 });
+
 // ==========================
-// REPORTE MODIFICADO
+// PEDIDOS POR PAIS Y CLIENTE
 // ==========================
 
+app.get(
+'/reportes/pedidos-pais-cliente',
+async (req,res)=>{
 
+    const [Paises] =
+    await pool.query(`
+        SELECT *
+        FROM pais
+        ORDER BY NombrePais
+    `);
 
+    res.render(
+        'Reportes/PedidosPaisCliente',
+        {
+            Paises,
+            Clientes: [],
+            Pedidos: []
+        }
+    );
+
+});
+
+app.get(
+'/clientes-por-pais/:id',
+async (req,res)=>{
+
+    const [Clientes] =
+    await pool.query(
+    `
+    SELECT *
+    FROM cliente
+    WHERE IdPais=?
+    ORDER BY NombreEmpresa
+    `,
+    [req.params.id]
+    );
+
+    res.json(Clientes);
+
+});
+
+app.post(
+'/reportes/pedidos-pais-cliente',
+async (req,res)=>{
+
+    const IdPais =
+    req.body.IdPais;
+
+    const IdCliente =
+    req.body.IdCliente;
+
+    const [Paises] =
+    await pool.query(`
+        SELECT *
+        FROM pais
+    `);
+
+    const [Clientes] =
+    await pool.query(
+    `
+    SELECT *
+    FROM cliente
+    WHERE IdPais=?
+    `,
+    [IdPais]
+    );
+
+    const [Pedidos] =
+    await pool.query(
+    `
+    SELECT
+        p.IdPedido,
+        p.FechaPedido,
+        p.FechaEntrega,
+        e.Nombres,
+        e.Apellidos
+    FROM pedido p
+    INNER JOIN empleado e
+    ON p.IdEmpleado=e.IdEmpleado
+    WHERE p.IdCliente=?
+    `,
+    [IdCliente]
+    );
+
+    res.render(
+        'Reportes/PedidosPaisCliente',
+        {
+            Paises,
+            Clientes,
+            Pedidos,
+            IdPais,
+            IdCliente
+        }
+    );
+
+});
 // ==========================
 // SERVIDOR
 // ==========================
