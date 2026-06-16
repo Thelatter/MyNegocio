@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Nuevo Pedido</title>
+
+<link
+rel="stylesheet"
+href="/css/estilo.css">
+
+</head>
+
+<body>
+
+<%- include('../Partials/Menu') %>
+
+<div class="contenedor">
+
+<h1>Nuevo Pedido</h1>
+
+<form
+action="/pedidos/nuevo"
+method="POST"
+class="formulario-card">
+
+<label>Cliente</label>
+
+<select
+name="IdCliente"
+required>
+
+<% Clientes.forEach(c=>{ %>
+
+<option
+value="<%= c.IdCliente %>">
+
+<%= c.NombreEmpresa %>
+
+</option>
+
+<% }) %>
+
+</select>
+
+<label>Empleado</label>
+
+<select
+name="IdEmpleado"
+required>
+
+<% Empleados.forEach(e=>{ %>
+
+<option
+value="<%= e.IdEmpleado %>">
+
+<%= e.Nombre %>
+
+</option>
+
+<% }) %>
+
+</select>
+
+<label>Fecha Pedido</label>
+
+<input
+type="date"
+name="FechaPedido"
+required>
+
+<button
+type="submit"
+class="btn-nuevo">
+
+Guardar Pedido
+
+</button>
+
+</form>
+
+</div>
+
+</body>
+
+</html>

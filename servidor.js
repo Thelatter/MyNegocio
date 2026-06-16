@@ -1093,6 +1093,73 @@ async (req,res)=>{
 
 });
 
+
+app.get('/pedidos/nuevo', async(req,res)=>{
+
+    const [Clientes] =
+    await pool.query(`
+        SELECT
+        IdCliente,
+        NombreEmpresa
+        FROM cliente
+        ORDER BY NombreEmpresa
+    `);
+
+    const [Empleados] =
+    await pool.query(`
+        SELECT
+        IdEmpleado,
+        CONCAT(
+            Nombres,' ',
+            Apellidos
+        ) Nombre
+        FROM empleado
+    `);
+
+    res.render(
+        'Pedidos/Nuevo',
+        {
+            Clientes,
+            Empleados
+        }
+    );
+
+});
+
+app.post('/pedidos/nuevo', async(req,res)=>{
+
+    const {
+        IdCliente,
+        IdEmpleado,
+        FechaPedido
+    } = req.body;
+
+    await pool.query(
+    `
+    INSERT INTO pedido
+    (
+        IdCliente,
+        IdEmpleado,
+        FechaPedido
+    )
+    VALUES
+    (
+        ?,
+        ?,
+        ?
+    )
+    `,
+    [
+        IdCliente,
+        IdEmpleado,
+        FechaPedido
+    ]);
+
+    res.redirect('/pedidos/buscar');
+
+});
+
+
 // ==========================
 // SERVIDOR
 // ==========================
