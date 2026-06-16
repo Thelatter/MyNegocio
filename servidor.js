@@ -996,13 +996,13 @@ async (req,res)=>{
             SELECT
                 p.IdPedido,
                 p.FechaPedido,
-                p.FechaEntrega,
                 e.Nombres,
                 e.Apellidos
             FROM pedido p
             INNER JOIN empleado e
-            ON p.IdEmpleado=e.IdEmpleado
-            WHERE p.IdCliente=?
+            ON p.IdEmpleado = e.IdEmpleado
+            WHERE p.IdCliente = ?
+            ORDER BY p.FechaPedido DESC
             `,
             [IdCliente]
             );
