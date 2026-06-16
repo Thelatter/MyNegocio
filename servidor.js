@@ -87,12 +87,23 @@ app.get('/contacto', (req, res) => {
 app.get('/clientes', async (req, res) => {
 
     const [Clientes] = await pool.query(`
+        SELECT
+            c.*,
+            p.NombrePais
+        FROM cliente c
+        LEFT JOIN pais p
+        ON c.IdPais = p.IdPais
+    `);
+
+    const [Paises] = await pool.query(`
         SELECT *
-        FROM cliente
+        FROM pais
+        ORDER BY NombrePais
     `);
 
     res.render('Clientes/Listar', {
-        Clientes
+        Clientes,
+        Paises
     });
 });
 
@@ -500,22 +511,24 @@ app.post('/clientes/nuevo', async (req, res) => {
     const IdCliente = (Max[0].Ultimo || 0) + 1;
 
     await pool.query(
-    `INSERT INTO cliente
-    (
-        IdCliente,
-        NombreEmpresa,
-        Contacto,
-        Telefono,
-        Direccion
-    )
-    VALUES (?,?,?,?,?)`,
-    [
-        IdCliente,
-        req.body.NombreEmpresa,
-        req.body.Contacto,
-        req.body.Telefono,
-        req.body.Direccion
-    ]
+`INSERT INTO cliente
+(
+    IdCliente,
+    NombreEmpresa,
+    Contacto,
+    Telefono,
+    Direccion,
+    IdPais
+)
+VALUES (?,?,?,?,?,?)`,
+[
+    IdCliente,
+    req.body.NombreEmpresa,
+    req.body.Contacto,
+    req.body.Telefono,
+    req.body.Direccion,
+    req.body.IdPais
+]
 );
 
     res.redirect('/clientes');
@@ -531,8 +544,15 @@ app.get('/clientes/editar/:id', async (req, res) => {
         [id]
     );
 
+    const [Paises] = await pool.query(`
+        SELECT *
+        FROM pais
+        ORDER BY NombrePais
+    `);
+
     res.render('Clientes/Editar', {
-        Cliente: Cliente[0]
+        Cliente: Cliente[0],
+        Paises
     });
 
 });
@@ -542,19 +562,21 @@ app.post('/clientes/editar/:id', async (req, res) => {
     const id = req.params.id;
 
     await pool.query(
-    `UPDATE cliente
-     SET NombreEmpresa=?,
-         Contacto=?,
-         Telefono=?,
-         Direccion=?
-     WHERE IdCliente=?`,
-    [
-        req.body.NombreEmpresa,
-        req.body.Contacto,
-        req.body.Telefono,
-        req.body.Direccion,
-        id
-    ]
+`UPDATE cliente
+ SET NombreEmpresa=?,
+     Contacto=?,
+     Telefono=?,
+     Direccion=?,
+     IdPais=?
+ WHERE IdCliente=?`,
+[
+    req.body.NombreEmpresa,
+    req.body.Contacto,
+    req.body.Telefono,
+    req.body.Direccion,
+    req.body.IdPais,
+    id
+]
 );
 
     res.redirect('/clientes');
@@ -896,6 +918,11 @@ app.get('/empleados/eliminar/:id', async (req, res) => {
     res.redirect('/empleados');
 
 });
+// ==========================
+// REPORTE MODIFICADO
+// ==========================
+
+
 
 // ==========================
 // SERVIDOR

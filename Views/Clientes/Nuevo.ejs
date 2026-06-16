@@ -38,6 +38,21 @@
 
 <br><br>
 
+<label>País</label>
+
+<select name="IdPais" required>
+
+<% Paises.forEach(p=>{ %>
+
+<option value="<%= p.IdPais %>">
+    <%= p.NombrePais %>
+</option>
+
+<% }) %>
+
+</select>
+<br><br>
+
 <button type="submit">
 Guardar
 </button>
