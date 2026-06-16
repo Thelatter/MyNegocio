@@ -115,6 +115,7 @@ name="IdPais">
 <% }) %>
 
 </select>
+<br><br>
 <button type="submit" class="popup">
 Guardar
 </button>
@@ -170,6 +171,22 @@ name="Direccion">
 
 <br><br>
 
+<p>País</p>
+
+<select
+id="editPais"
+name="IdPais">
+
+<% Paises.forEach(p=>{ %>
+
+<option value="<%= p.IdPais %>">
+    <%= p.NombrePais %>
+</option>
+
+<% }) %>
+
+</select>
+<br><br>
 <button
 type="submit"
 class="popup">
