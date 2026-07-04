@@ -363,7 +363,6 @@ app.get('/reportes/categorias/pdf', async (req, res) => {
 });
 
 app.get('/reportes/categorias', async (req, res) => {
-    console.log('PDF PROFESIONAL DE CATEGORIAS EJECUTADO');
     const [Categorias] = await pool.query(`
         SELECT
         c.IdCategoria,
