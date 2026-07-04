@@ -85,9 +85,9 @@ year:'numeric'
 
 <td><%= det.Cantidad %></td>
 
-<td>S/. <%= det.PrecioUnidad %></td>
+<td>S/. <%= Number(det.PrecioUnidad).toFixed(2) %></td>
 
-<td>S/. <%= det.Importe %></td>
+<td>S/. <%= Number(det.Importe).toFixed(2) %></td>
 
 </tr>
 
