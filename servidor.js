@@ -8,8 +8,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const nodemailer = require("nodemailer");
 
-
-
 // ==========================
 // CONFIGURACION
 // ==========================
@@ -52,7 +50,92 @@ const pool = mysql.createPool({
         console.error(error);
     }
 })();
+// ==========================
+// FUNCIONES PARA PDF PROFESIONAL
+// ==========================
 
+function encabezadoPDF(doc, titulo) {
+
+    doc.rect(0, 0, doc.page.width, 75)
+        .fill('#1e293b');
+
+    doc.fillColor('white')
+        .fontSize(20)
+        .font('Helvetica-Bold')
+        .text('MyNegocio', 50, 22);
+
+    doc.fontSize(11)
+        .font('Helvetica')
+        .text('Sistema de Gestión Empresarial', 50, 48);
+
+    doc.fillColor('#1e293b')
+        .fontSize(18)
+        .font('Helvetica-Bold')
+        .text(titulo, 50, 105);
+
+    doc.fillColor('#64748b')
+        .fontSize(10)
+        .font('Helvetica')
+        .text(
+            'Fecha de generación: ' + new Date().toLocaleDateString('es-PE'),
+            50,
+            130
+        );
+
+    doc.moveTo(50, 155)
+        .lineTo(550, 155)
+        .strokeColor('#e5e7eb')
+        .stroke();
+}
+
+function piePDF(doc) {
+
+    const y = doc.page.height - 50;
+
+    doc.moveTo(50, y - 10)
+        .lineTo(550, y - 10)
+        .strokeColor('#e5e7eb')
+        .stroke();
+
+    doc.fillColor('#64748b')
+        .fontSize(9)
+        .font('Helvetica')
+        .text('MyNegocio - Reporte generado automáticamente', 50, y);
+
+    doc.text(
+        'Página 1',
+        500,
+        y,
+        {
+            align: 'right'
+        }
+    );
+}
+
+function celdaPDF(doc, texto, x, y, ancho, alto, opciones = {}) {
+
+    if (opciones.fondo) {
+        doc.rect(x, y, ancho, alto)
+            .fill(opciones.fondo);
+    }
+
+    doc.rect(x, y, ancho, alto)
+        .strokeColor('#d1d5db')
+        .stroke();
+
+    doc.fillColor(opciones.color || '#111827')
+        .fontSize(opciones.size || 10)
+        .font(opciones.bold ? 'Helvetica-Bold' : 'Helvetica')
+        .text(
+            texto,
+            x + 6,
+            y + 8,
+            {
+                width: ancho - 12,
+                align: opciones.align || 'left'
+            }
+        );
+}
 // ==========================
 // HOME
 // ==========================
@@ -189,38 +272,91 @@ app.get('/reportes/categorias/pdf', async (req, res) => {
 
     const [Categorias] = await pool.query(`
         SELECT
-        c.IdCategoria,
-        c.NombreCategoria,
-        COUNT(p.IdProducto) AS TotalProductos
+            c.IdCategoria,
+            c.NombreCategoria,
+            COUNT(p.IdProducto) AS TotalProductos
         FROM categoria c
         LEFT JOIN producto p
-        ON c.IdCategoria=p.IdCategoria
+        ON c.IdCategoria = p.IdCategoria
         GROUP BY
-        c.IdCategoria,
-        c.NombreCategoria
+            c.IdCategoria,
+            c.NombreCategoria
+        ORDER BY c.NombreCategoria
     `);
 
-    const doc = new PDFDocument();
+    const doc = new PDFDocument({
+        margin: 50,
+        size: 'A4'
+    });
 
+    res.setHeader('Content-Type', 'application/pdf');
     res.setHeader(
-        'Content-Type',
-        'application/pdf'
+        'Content-Disposition',
+        'inline; filename="reporte_categorias.pdf"'
     );
 
     doc.pipe(res);
 
-    doc.fontSize(18)
-       .text('REPORTE DE CATEGORIAS');
+    encabezadoPDF(doc, 'Reporte de Categorías');
 
-    doc.moveDown();
+    let y = 180;
 
-    Categorias.forEach(cat => {
+    celdaPDF(doc, 'ID', 50, y, 70, 30, {
+        fondo: '#1e293b',
+        color: 'white',
+        bold: true,
+        align: 'center'
+    });
 
-        doc.text(
-            `${cat.NombreCategoria} - ${cat.TotalProductos} productos`
-        );
+    celdaPDF(doc, 'Categoría', 120, y, 280, 30, {
+        fondo: '#1e293b',
+        color: 'white',
+        bold: true
+    });
+
+    celdaPDF(doc, 'Total Productos', 400, y, 150, 30, {
+        fondo: '#1e293b',
+        color: 'white',
+        bold: true,
+        align: 'center'
+    });
+
+    y += 30;
+
+    Categorias.forEach((cat, index) => {
+
+        const fondo = index % 2 === 0 ? '#f8fafc' : 'white';
+
+        celdaPDF(doc, String(cat.IdCategoria), 50, y, 70, 30, {
+            fondo,
+            align: 'center'
+        });
+
+        celdaPDF(doc, cat.NombreCategoria, 120, y, 280, 30, {
+            fondo
+        });
+
+        celdaPDF(doc, String(cat.TotalProductos), 400, y, 150, 30, {
+            fondo,
+            align: 'center'
+        });
+
+        y += 30;
 
     });
+
+    y += 25;
+
+    doc.fillColor('#059669')
+        .fontSize(13)
+        .font('Helvetica-Bold')
+        .text(
+            `Total de categorías: ${Categorias.length}`,
+            50,
+            y
+        );
+
+    piePDF(doc);
 
     doc.end();
 
@@ -261,6 +397,7 @@ app.get('/reportes/catalogo/pdf/:id', async (req, res) => {
             Descuento
         FROM producto
         WHERE IdCategoria = ?
+        ORDER BY NombreProducto
     `, [id]);
 
     const [Categoria] = await pool.query(
@@ -268,53 +405,132 @@ app.get('/reportes/catalogo/pdf/:id', async (req, res) => {
         [id]
     );
 
-    const doc = new PDFDocument();
+    const doc = new PDFDocument({
+        margin: 50,
+        size: 'A4'
+    });
 
+    res.setHeader('Content-Type', 'application/pdf');
     res.setHeader(
-        'Content-Type',
-        'application/pdf'
+        'Content-Disposition',
+        'inline; filename="catalogo_categoria.pdf"'
     );
 
     doc.pipe(res);
 
-    doc.fontSize(18)
-       .text('CATALOGO POR CATEGORIA');
+    encabezadoPDF(doc, 'Catálogo por Categoría');
 
-    doc.moveDown();
-
-    doc.text(
-        'Categoria: ' +
-        Categoria[0].NombreCategoria
-    );
-
-    doc.moveDown();
-
-    Productos.forEach(p => {
-
-        doc.text(
-            `${p.IdProducto} - ${p.NombreProducto}`
+    doc.fillColor('#334155')
+        .fontSize(12)
+        .font('Helvetica-Bold')
+        .text(
+            'Categoría: ' + Categoria[0].NombreCategoria,
+            50,
+            160
         );
 
-        doc.text(
-            `Precio: S/. ${p.PrecioUnidad}`
+    let y = 195;
+
+    celdaPDF(doc, 'ID', 50, y, 55, 30, {
+        fondo: '#1e293b',
+        color: 'white',
+        bold: true,
+        align: 'center'
+    });
+
+    celdaPDF(doc, 'Producto', 105, y, 210, 30, {
+        fondo: '#1e293b',
+        color: 'white',
+        bold: true
+    });
+
+    celdaPDF(doc, 'Precio', 315, y, 85, 30, {
+        fondo: '#1e293b',
+        color: 'white',
+        bold: true,
+        align: 'center'
+    });
+
+    celdaPDF(doc, 'Stock', 400, y, 70, 30, {
+        fondo: '#1e293b',
+        color: 'white',
+        bold: true,
+        align: 'center'
+    });
+
+    celdaPDF(doc, 'Descuento', 470, y, 80, 30, {
+        fondo: '#1e293b',
+        color: 'white',
+        bold: true,
+        align: 'center'
+    });
+
+    y += 30;
+
+    Productos.forEach((p, index) => {
+
+        const fondo = index % 2 === 0 ? '#f8fafc' : 'white';
+
+        celdaPDF(doc, String(p.IdProducto), 50, y, 55, 30, {
+            fondo,
+            align: 'center'
+        });
+
+        celdaPDF(doc, p.NombreProducto, 105, y, 210, 30, {
+            fondo
+        });
+
+        celdaPDF(
+            doc,
+            `S/. ${Number(p.PrecioUnidad).toFixed(2)}`,
+            315,
+            y,
+            85,
+            30,
+            {
+                fondo,
+                align: 'center'
+            }
         );
 
-        doc.text(
-            `Stock: ${p.UnidadesEnExistencia}`
+        celdaPDF(doc, String(p.UnidadesEnExistencia), 400, y, 70, 30, {
+            fondo,
+            align: 'center'
+        });
+
+        celdaPDF(
+            doc,
+            `${Number(p.Descuento).toFixed(2)}%`,
+            470,
+            y,
+            80,
+            30,
+            {
+                fondo,
+                align: 'center'
+            }
         );
 
-        doc.text(
-            `Descuento: ${p.Descuento}%`
-        );
-
-        doc.moveDown();
+        y += 30;
 
     });
+
+    y += 25;
+
+    doc.fillColor('#059669')
+        .fontSize(13)
+        .font('Helvetica-Bold')
+        .text(
+            `Total de productos: ${Productos.length}`,
+            50,
+            y
+        );
+
+    piePDF(doc);
 
     doc.end();
 
 });
-
 
 
 // Catalogo por categoria
@@ -432,56 +648,146 @@ async (req, res) => {
         [id]
     );
 
-    const doc = new PDFDocument();
+    if (Pedido.length === 0) {
+        return res.send('Pedido no encontrado');
+    }
 
+    const doc = new PDFDocument({
+        margin: 50,
+        size: 'A4'
+    });
+
+    res.setHeader('Content-Type', 'application/pdf');
     res.setHeader(
-        'Content-Type',
-        'application/pdf'
+        'Content-Disposition',
+        `inline; filename="pedido_${id}.pdf"`
     );
 
     doc.pipe(res);
 
-    doc.fontSize(18)
-       .text('REPORTE DE PEDIDO');
+    encabezadoPDF(doc, 'Reporte de Pedido');
 
-    doc.moveDown();
+    let y = 170;
 
-    doc.text(
-        `Pedido: ${Pedido[0].IdPedido}`
-    );
+    doc.fillColor('#111827')
+        .fontSize(16)
+        .font('Helvetica-Bold')
+        .text(`Pedido #${Pedido[0].IdPedido}`, 50, y);
 
-    doc.text(
-        `Cliente: ${Pedido[0].NombreEmpresa}`
-    );
+    y += 35;
 
-    doc.text(
-        `Fecha: ${new Date(
-            Pedido[0].FechaPedido
-        ).toLocaleDateString('es-PE')}`
-    );
+    doc.fillColor('#334155')
+        .fontSize(10)
+        .font('Helvetica-Bold')
+        .text('Cliente', 50, y);
 
-    doc.moveDown();
+    doc.font('Helvetica')
+        .text(Pedido[0].NombreEmpresa, 50, y + 15);
+
+    doc.font('Helvetica-Bold')
+        .text('Fecha', 250, y);
+
+    doc.font('Helvetica')
+        .text(
+            new Date(Pedido[0].FechaPedido).toLocaleDateString('es-PE'),
+            250,
+            y + 15
+        );
+
+    y += 55;
+
+    celdaPDF(doc, 'Producto', 50, y, 190, 30, {
+        fondo: '#1e293b',
+        color: 'white',
+        bold: true
+    });
+
+    celdaPDF(doc, 'Cantidad', 240, y, 80, 30, {
+        fondo: '#1e293b',
+        color: 'white',
+        bold: true,
+        align: 'center'
+    });
+
+    celdaPDF(doc, 'Precio', 320, y, 90, 30, {
+        fondo: '#1e293b',
+        color: 'white',
+        bold: true,
+        align: 'center'
+    });
+
+    celdaPDF(doc, 'Importe', 410, y, 140, 30, {
+        fondo: '#1e293b',
+        color: 'white',
+        bold: true,
+        align: 'center'
+    });
+
+    y += 30;
 
     let total = 0;
 
-    Detalles.forEach(d => {
+    Detalles.forEach((d, index) => {
+
+        const fondo = index % 2 === 0 ? '#f8fafc' : 'white';
 
         total += Number(d.Importe);
 
-        doc.text(
-            `${d.NombreProducto}
-Cantidad: ${d.Cantidad}
-Precio: ${d.PrecioUnidad}
-Importe: ${d.Importe}`
+        celdaPDF(doc, d.NombreProducto, 50, y, 190, 30, {
+            fondo
+        });
+
+        celdaPDF(doc, String(d.Cantidad), 240, y, 80, 30, {
+            fondo,
+            align: 'center'
+        });
+
+        celdaPDF(
+            doc,
+            `S/. ${Number(d.PrecioUnidad).toFixed(2)}`,
+            320,
+            y,
+            90,
+            30,
+            {
+                fondo,
+                align: 'center'
+            }
         );
 
-        doc.moveDown();
+        celdaPDF(
+            doc,
+            `S/. ${Number(d.Importe).toFixed(2)}`,
+            410,
+            y,
+            140,
+            30,
+            {
+                fondo,
+                align: 'center'
+            }
+        );
+
+        y += 30;
 
     });
 
-    doc.text(
-        `TOTAL: S/. ${total.toFixed(2)}`
-    );
+    y += 25;
+
+    doc.fillColor('#059669')
+        .fontSize(16)
+        .font('Helvetica-Bold')
+        .text(
+            `TOTAL: S/. ${total.toFixed(2)}`,
+            350,
+            y,
+            {
+                width: 200,
+                align: 'right'
+            }
+        );
+
+    piePDF(doc);
 
     doc.end();
 

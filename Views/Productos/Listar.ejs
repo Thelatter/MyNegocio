@@ -45,11 +45,11 @@
 
         <td><%= producto.CantidadPorUnidad %></td>
 
-        <td>S/. <%= producto.PrecioUnidad %></td>
+        <td>S/. <%= Number(producto.PrecioUnidad).toFixed(2) %></td>
 
         <td><%= producto.UnidadesEnExistencia %></td>
 
-        <td><%= producto.Descuento %>%</td>
+        <td><%= Number(producto.Descuento).toFixed(2) %>%</td>
         <td>
 
         <button
