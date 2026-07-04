@@ -59,92 +59,7 @@ const pool = mysql.createPool({
         console.error(error);
     }
 })();
-// ==========================
-// FUNCIONES PARA PDF PROFESIONAL
-// ==========================
 
-function encabezadoPDF(doc, titulo) {
-
-    doc.rect(0, 0, doc.page.width, 75)
-        .fill('#1e293b');
-
-    doc.fillColor('white')
-        .fontSize(20)
-        .font('Helvetica-Bold')
-        .text('MyNegocio', 50, 22);
-
-    doc.fontSize(11)
-        .font('Helvetica')
-        .text('Sistema de Gestión Empresarial', 50, 48);
-
-    doc.fillColor('#1e293b')
-        .fontSize(18)
-        .font('Helvetica-Bold')
-        .text(titulo, 50, 105);
-
-    doc.fillColor('#64748b')
-        .fontSize(10)
-        .font('Helvetica')
-        .text(
-            'Fecha de generación: ' + new Date().toLocaleDateString('es-PE'),
-            50,
-            130
-        );
-
-    doc.moveTo(50, 155)
-        .lineTo(550, 155)
-        .strokeColor('#e5e7eb')
-        .stroke();
-}
-
-function piePDF(doc) {
-
-    const y = doc.page.height - 50;
-
-    doc.moveTo(50, y - 10)
-        .lineTo(550, y - 10)
-        .strokeColor('#e5e7eb')
-        .stroke();
-
-    doc.fillColor('#64748b')
-        .fontSize(9)
-        .font('Helvetica')
-        .text('MyNegocio - Reporte generado automáticamente', 50, y);
-
-    doc.text(
-        'Página 1',
-        500,
-        y,
-        {
-            align: 'right'
-        }
-    );
-}
-
-function celdaPDF(doc, texto, x, y, ancho, alto, opciones = {}) {
-
-    if (opciones.fondo) {
-        doc.rect(x, y, ancho, alto)
-            .fill(opciones.fondo);
-    }
-
-    doc.rect(x, y, ancho, alto)
-        .strokeColor('#d1d5db')
-        .stroke();
-
-    doc.fillColor(opciones.color || '#111827')
-        .fontSize(opciones.size || 10)
-        .font(opciones.bold ? 'Helvetica-Bold' : 'Helvetica')
-        .text(
-            texto,
-            x + 6,
-            y + 8,
-            {
-                width: ancho - 12,
-                align: opciones.align || 'left'
-            }
-        );
-}
 // ==========================
 // HOME
 // ==========================
@@ -278,7 +193,7 @@ app.post('/pedidos/buscar', async (req, res) => {
 
 
 app.get('/reportes/categorias/pdf', async (req, res) => {
-
+    console.log('PDF CATEGORIAS CON UTILS EJECUTADO');
     const [Categorias] = await pool.query(`
         SELECT
             c.IdCategoria,
