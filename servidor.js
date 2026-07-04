@@ -1126,36 +1126,58 @@ app.get('/pedidos/nuevo', async(req,res)=>{
 
 });
 
-app.post('/pedidos/nuevo', async(req,res)=>{
+app.post('/pedidos/nuevo', async (req, res) => {
 
-    const {
-        IdCliente,
-        IdEmpleado,
-        FechaPedido
-    } = req.body;
+    try {
 
-    await pool.query(
-    `
-    INSERT INTO pedido
-    (
-        IdCliente,
-        IdEmpleado,
-        FechaPedido
-    )
-    VALUES
-    (
-        ?,
-        ?,
-        ?
-    )
-    `,
-    [
-        IdCliente,
-        IdEmpleado,
-        FechaPedido
-    ]);
+        const {
+            IdCliente,
+            IdEmpleado,
+            FechaPedido
+        } = req.body;
 
-    res.redirect('/pedidos/buscar');
+        // Obtener el último número de pedido
+        const [Max] = await pool.query(`
+            SELECT MAX(IdPedido) AS Ultimo
+            FROM pedido
+        `);
+
+        const IdPedido = (Max[0].Ultimo || 0) + 1;
+
+        // Registrar nuevo pedido
+        await pool.query(
+            `
+            INSERT INTO pedido
+            (
+                IdPedido,
+                IdCliente,
+                IdEmpleado,
+                FechaPedido
+            )
+            VALUES (?,?,?,?)
+            `,
+            [
+                IdPedido,
+                IdCliente,
+                IdEmpleado,
+                FechaPedido
+            ]
+        );
+
+        res.redirect('/pedidos/buscar');
+
+    } catch (error) {
+
+        console.error('ERROR AL GUARDAR PEDIDO:');
+        console.error(error);
+
+        res.send(`
+            <h2>Error al guardar pedido</h2>
+            <p>${error.message}</p>
+            <a href="/pedidos/nuevo">Volver</a>
+        `);
+
+    }
 
 });
 
