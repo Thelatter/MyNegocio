@@ -8,6 +8,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const nodemailer = require("nodemailer");
 
+
+const {
+    encabezadoPDF,
+    piePDF,
+    tablaPDF,
+    textoResumen
+} = require('./utils/pdfReportes');
+
+
 // ==========================
 // CONFIGURACION
 // ==========================
@@ -299,62 +308,50 @@ app.get('/reportes/categorias/pdf', async (req, res) => {
 
     encabezadoPDF(doc, 'Reporte de Categorías');
 
-    let y = 180;
-
-    celdaPDF(doc, 'ID', 50, y, 70, 30, {
-        fondo: '#1e293b',
-        color: 'white',
-        bold: true,
-        align: 'center'
-    });
-
-    celdaPDF(doc, 'Categoría', 120, y, 280, 30, {
-        fondo: '#1e293b',
-        color: 'white',
-        bold: true
-    });
-
-    celdaPDF(doc, 'Total Productos', 400, y, 150, 30, {
-        fondo: '#1e293b',
-        color: 'white',
-        bold: true,
-        align: 'center'
-    });
-
-    y += 30;
-
-    Categorias.forEach((cat, index) => {
-
-        const fondo = index % 2 === 0 ? '#f8fafc' : 'white';
-
-        celdaPDF(doc, String(cat.IdCategoria), 50, y, 70, 30, {
-            fondo,
+    const columnas = [
+        {
+            titulo: 'ID',
+            campo: 'IdCategoria',
+            x: 50,
+            ancho: 70,
             align: 'center'
-        });
-
-        celdaPDF(doc, cat.NombreCategoria, 120, y, 280, 30, {
-            fondo
-        });
-
-        celdaPDF(doc, String(cat.TotalProductos), 400, y, 150, 30, {
-            fondo,
+        },
+        {
+            titulo: 'Categoría',
+            campo: 'NombreCategoria',
+            x: 120,
+            ancho: 280
+        },
+        {
+            titulo: 'Total Productos',
+            campo: 'TotalProductos',
+            x: 400,
+            ancho: 145,
             align: 'center'
-        });
+        }
+    ];
 
-        y += 30;
+    const filas = Categorias.map(cat => ({
+        IdCategoria: cat.IdCategoria,
+        NombreCategoria: cat.NombreCategoria,
+        TotalProductos: cat.TotalProductos
+    }));
 
-    });
+    let yFinal = tablaPDF(
+        doc,
+        columnas,
+        filas,
+        185
+    );
 
-    y += 25;
+    yFinal += 25;
 
-    doc.fillColor('#059669')
-        .fontSize(13)
-        .font('Helvetica-Bold')
-        .text(
-            `Total de categorías: ${Categorias.length}`,
-            50,
-            y
-        );
+    textoResumen(
+        doc,
+        `Total de categorías: ${Categorias.length}`,
+        50,
+        yFinal
+    );
 
     piePDF(doc);
 
@@ -420,110 +417,74 @@ app.get('/reportes/catalogo/pdf/:id', async (req, res) => {
     encabezadoPDF(doc, 'Catálogo por Categoría');
 
     doc.fillColor('#334155')
-        .fontSize(12)
         .font('Helvetica-Bold')
+        .fontSize(12)
         .text(
             'Categoría: ' + Categoria[0].NombreCategoria,
             50,
-            160
+            165
         );
 
-    let y = 195;
-
-    celdaPDF(doc, 'ID', 50, y, 55, 30, {
-        fondo: '#1e293b',
-        color: 'white',
-        bold: true,
-        align: 'center'
-    });
-
-    celdaPDF(doc, 'Producto', 105, y, 210, 30, {
-        fondo: '#1e293b',
-        color: 'white',
-        bold: true
-    });
-
-    celdaPDF(doc, 'Precio', 315, y, 85, 30, {
-        fondo: '#1e293b',
-        color: 'white',
-        bold: true,
-        align: 'center'
-    });
-
-    celdaPDF(doc, 'Stock', 400, y, 70, 30, {
-        fondo: '#1e293b',
-        color: 'white',
-        bold: true,
-        align: 'center'
-    });
-
-    celdaPDF(doc, 'Descuento', 470, y, 80, 30, {
-        fondo: '#1e293b',
-        color: 'white',
-        bold: true,
-        align: 'center'
-    });
-
-    y += 30;
-
-    Productos.forEach((p, index) => {
-
-        const fondo = index % 2 === 0 ? '#f8fafc' : 'white';
-
-        celdaPDF(doc, String(p.IdProducto), 50, y, 55, 30, {
-            fondo,
+    const columnas = [
+        {
+            titulo: 'ID',
+            campo: 'IdProducto',
+            x: 50,
+            ancho: 55,
             align: 'center'
-        });
-
-        celdaPDF(doc, p.NombreProducto, 105, y, 210, 30, {
-            fondo
-        });
-
-        celdaPDF(
-            doc,
-            `S/. ${Number(p.PrecioUnidad).toFixed(2)}`,
-            315,
-            y,
-            85,
-            30,
-            {
-                fondo,
-                align: 'center'
-            }
-        );
-
-        celdaPDF(doc, String(p.UnidadesEnExistencia), 400, y, 70, 30, {
-            fondo,
+        },
+        {
+            titulo: 'Producto',
+            campo: 'NombreProducto',
+            x: 105,
+            ancho: 210
+        },
+        {
+            titulo: 'Precio',
+            campo: 'PrecioUnidad',
+            x: 315,
+            ancho: 85,
             align: 'center'
-        });
+        },
+        {
+            titulo: 'Stock',
+            campo: 'UnidadesEnExistencia',
+            x: 400,
+            ancho: 70,
+            align: 'center'
+        },
+        {
+            titulo: 'Descuento',
+            campo: 'Descuento',
+            x: 470,
+            ancho: 75,
+            align: 'center'
+        }
+    ];
 
-        celdaPDF(
-            doc,
-            `${Number(p.Descuento).toFixed(2)}%`,
-            470,
-            y,
-            80,
-            30,
-            {
-                fondo,
-                align: 'center'
-            }
-        );
+    const filas = Productos.map(p => ({
+        IdProducto: p.IdProducto,
+        NombreProducto: p.NombreProducto,
+        PrecioUnidad: `S/. ${Number(p.PrecioUnidad).toFixed(2)}`,
+        UnidadesEnExistencia: p.UnidadesEnExistencia,
+        Descuento: `${Number(p.Descuento).toFixed(2)}%`
+    }));
 
-        y += 30;
+    let yFinal = tablaPDF(
+        doc,
+        columnas,
+        filas,
+        200
+    );
 
-    });
+    yFinal += 25;
 
-    y += 25;
-
-    doc.fillColor('#059669')
-        .fontSize(13)
-        .font('Helvetica-Bold')
-        .text(
-            `Total de productos: ${Productos.length}`,
-            50,
-            y
-        );
+    textoResumen(
+        doc,
+        `Total de productos: ${Productos.length}`,
+        50,
+        yFinal
+    );
 
     piePDF(doc);
 
