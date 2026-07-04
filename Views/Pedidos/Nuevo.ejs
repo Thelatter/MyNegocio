@@ -39,25 +39,55 @@
 
         <hr>
 
-        <h2>Producto del Pedido</h2>
+        <h2>Productos del Pedido</h2>
 
-        <label>Producto</label>
-        <select name="IdProducto" required>
-            <% Productos.forEach(p=>{ %>
-                <option value="<%= p.IdProducto %>">
-                    <%= p.NombreProducto %> -
-                    S/. <%= p.PrecioUnidad %> -
-                    Stock: <%= p.UnidadesEnExistencia %>
-                </option>
-            <% }) %>
-        </select>
+        <div id="productosPedido">
 
-        <label>Cantidad</label>
-        <input
-            type="number"
-            name="Cantidad"
-            min="1"
-            required>
+            <div class="fila-producto">
+
+                <div>
+                    <label>Producto</label>
+                    <select name="IdProducto[]" required>
+                        <% Productos.forEach(p=>{ %>
+                            <option value="<%= p.IdProducto %>">
+                                <%= p.NombreProducto %> -
+                                S/. <%= p.PrecioUnidad %> -
+                                Stock: <%= p.UnidadesEnExistencia %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Cantidad</label>
+                    <input
+                        type="number"
+                        name="Cantidad[]"
+                        min="1"
+                        required>
+                </div>
+
+                <div class="contenedor-quitar">
+                    <button
+                        type="button"
+                        class="btn-quitar"
+                        onclick="quitarProducto(this)">
+                        Quitar
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn-agregar"
+            onclick="agregarProducto()">
+            ➕ Agregar Producto
+        </button>
+
+        <br><br>
 
         <button type="submit" class="popup">
             Generar Nuevo Pedido
@@ -66,6 +96,34 @@
     </form>
 
 </div>
+
+<script>
+
+function agregarProducto() {
+
+    const contenedor = document.getElementById('productosPedido');
+
+    const filaOriginal = document.querySelector('.fila-producto');
+
+    const nuevaFila = filaOriginal.cloneNode(true);
+
+    nuevaFila.querySelector('input').value = '';
+
+    contenedor.appendChild(nuevaFila);
+}
+
+function quitarProducto(boton) {
+
+    const filas = document.querySelectorAll('.fila-producto');
+
+    if (filas.length > 1) {
+        boton.closest('.fila-producto').remove();
+    } else {
+        alert('Debe existir al menos un producto en el pedido.');
+    }
+}
+
+</script>
 
 </body>
 </html>

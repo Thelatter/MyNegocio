@@ -1133,52 +1133,38 @@ app.get('/pedidos/nuevo', async (req, res) => {
 
 app.post('/pedidos/nuevo', async (req, res) => {
 
+    const conexion = await pool.getConnection();
+
     try {
 
         const {
             IdCliente,
             IdEmpleado,
-            FechaPedido,
-            IdProducto,
-            Cantidad
+            FechaPedido
         } = req.body;
 
-        // 1. Obtener último número de pedido
-        const [Max] = await pool.query(`
+        let IdProducto = req.body.IdProducto;
+        let Cantidad = req.body.Cantidad;
+
+        // Si solo llega un producto, lo convertimos en arreglo
+        if (!Array.isArray(IdProducto)) {
+            IdProducto = [IdProducto];
+            Cantidad = [Cantidad];
+        }
+
+        // Iniciar transacción
+        await conexion.beginTransaction();
+
+        // Obtener nuevo ID de pedido
+        const [Max] = await conexion.query(`
             SELECT MAX(IdPedido) AS Ultimo
             FROM pedido
         `);
 
         const IdPedido = (Max[0].Ultimo || 0) + 1;
 
-        // 2. Buscar datos del producto seleccionado
-        const [Producto] = await pool.query(`
-            SELECT
-                PrecioUnidad,
-                Descuento,
-                UnidadesEnExistencia
-            FROM producto
-            WHERE IdProducto = ?
-        `, [IdProducto]);
-
-        if (Producto.length === 0) {
-            return res.send('Producto no encontrado');
-        }
-
-        const PrecioUnidad = Producto[0].PrecioUnidad;
-        const Descuento = Producto[0].Descuento || 0;
-        const StockActual = Producto[0].UnidadesEnExistencia;
-
-        if (Number(Cantidad) > Number(StockActual)) {
-            return res.send(`
-                <h2>No hay stock suficiente</h2>
-                <p>Stock disponible: ${StockActual}</p>
-                <a href="/pedidos/nuevo">Volver</a>
-            `);
-        }
-
-        // 3. Guardar encabezado del pedido
-        await pool.query(`
+        // Guardar cabecera del pedido
+        await conexion.query(`
             INSERT INTO pedido
             (
                 IdPedido,
@@ -1194,38 +1180,74 @@ app.post('/pedidos/nuevo', async (req, res) => {
             FechaPedido
         ]);
 
-        // 4. Guardar detalle del pedido
-        await pool.query(`
-            INSERT INTO detalles_de_pedido
-            (
-                IdPedido,
-                IdProducto,
-                PrecioUnidad,
-                Cantidad,
-                Descuento
-            )
-            VALUES (?,?,?,?,?)
-        `, [
-            IdPedido,
-            IdProducto,
-            PrecioUnidad,
-            Cantidad,
-            Descuento
-        ]);
+        // Guardar cada producto en detalles_de_pedido
+        for (let i = 0; i < IdProducto.length; i++) {
 
-        // 5. Descontar stock
-        await pool.query(`
-            UPDATE producto
-            SET UnidadesEnExistencia = UnidadesEnExistencia - ?
-            WHERE IdProducto = ?
-        `, [
-            Cantidad,
-            IdProducto
-        ]);
+            const idProd = IdProducto[i];
+            const cant = Number(Cantidad[i]);
+
+            if (!idProd || cant <= 0) {
+                continue;
+            }
+
+            const [Producto] = await conexion.query(`
+                SELECT
+                    PrecioUnidad,
+                    Descuento,
+                    UnidadesEnExistencia
+                FROM producto
+                WHERE IdProducto = ?
+            `, [idProd]);
+
+            if (Producto.length === 0) {
+                throw new Error(`Producto no encontrado: ${idProd}`);
+            }
+
+            const PrecioUnidad = Producto[0].PrecioUnidad;
+            const Descuento = Producto[0].Descuento || 0;
+            const StockActual = Producto[0].UnidadesEnExistencia;
+
+            if (cant > StockActual) {
+                throw new Error(
+                    `Stock insuficiente para el producto ${idProd}. Stock disponible: ${StockActual}`
+                );
+            }
+
+            await conexion.query(`
+                INSERT INTO detalles_de_pedido
+                (
+                    IdPedido,
+                    IdProducto,
+                    PrecioUnidad,
+                    Cantidad,
+                    Descuento
+                )
+                VALUES (?,?,?,?,?)
+            `, [
+                IdPedido,
+                idProd,
+                PrecioUnidad,
+                cant,
+                Descuento
+            ]);
+
+            await conexion.query(`
+                UPDATE producto
+                SET UnidadesEnExistencia = UnidadesEnExistencia - ?
+                WHERE IdProducto = ?
+            `, [
+                cant,
+                idProd
+            ]);
+        }
+
+        await conexion.commit();
 
         res.redirect('/pedidos/buscar');
 
     } catch (error) {
+
+        await conexion.rollback();
 
         console.error('ERROR AL GUARDAR PEDIDO:');
         console.error(error);
@@ -1235,6 +1257,10 @@ app.post('/pedidos/nuevo', async (req, res) => {
             <p>${error.message}</p>
             <a href="/pedidos/nuevo">Volver</a>
         `);
+
+    } finally {
+
+        conexion.release();
 
     }
 
