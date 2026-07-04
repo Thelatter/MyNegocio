@@ -825,7 +825,24 @@ h1{
 
     color:#059669;
 }
+.formulario-card{
+    background:white;
+    max-width:900px;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
 
+.formulario-card h2{
+    margin:20px 0 15px;
+    color:#1e293b;
+}
+
+.formulario-card hr{
+    margin:25px 0;
+    border:none;
+    border-top:1px solid #e5e7eb;
+}
 @media print{
 
     .menu,

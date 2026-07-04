@@ -1,16 +1,9 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
-<meta charset="UTF-8">
-
-<title>Nuevo Pedido</title>
-
-<link
-rel="stylesheet"
-href="/css/estilo.css">
-
+    <meta charset="UTF-8">
+    <title>Nuevo Pedido</title>
+    <link rel="stylesheet" href="/css/estilo.css">
 </head>
 
 <body>
@@ -19,70 +12,60 @@ href="/css/estilo.css">
 
 <div class="contenedor">
 
-<h1>Nuevo Pedido</h1>
+    <h1>Nuevo Pedido</h1>
 
-<form
-action="/pedidos/nuevo"
-method="POST"
-class="formulario-card">
+    <form action="/pedidos/nuevo" method="POST" class="formulario-card">
 
-<label>Cliente</label>
+        <label>Cliente</label>
+        <select name="IdCliente" required>
+            <% Clientes.forEach(c=>{ %>
+                <option value="<%= c.IdCliente %>">
+                    <%= c.NombreEmpresa %>
+                </option>
+            <% }) %>
+        </select>
 
-<select
-name="IdCliente"
-required>
+        <label>Empleado</label>
+        <select name="IdEmpleado" required>
+            <% Empleados.forEach(e=>{ %>
+                <option value="<%= e.IdEmpleado %>">
+                    <%= e.Nombre %>
+                </option>
+            <% }) %>
+        </select>
 
-<% Clientes.forEach(c=>{ %>
+        <label>Fecha Pedido</label>
+        <input type="date" name="FechaPedido" required>
 
-<option
-value="<%= c.IdCliente %>">
+        <hr>
 
-<%= c.NombreEmpresa %>
+        <h2>Producto del Pedido</h2>
 
-</option>
+        <label>Producto</label>
+        <select name="IdProducto" required>
+            <% Productos.forEach(p=>{ %>
+                <option value="<%= p.IdProducto %>">
+                    <%= p.NombreProducto %> -
+                    S/. <%= p.PrecioUnidad %> -
+                    Stock: <%= p.UnidadesEnExistencia %>
+                </option>
+            <% }) %>
+        </select>
 
-<% }) %>
+        <label>Cantidad</label>
+        <input
+            type="number"
+            name="Cantidad"
+            min="1"
+            required>
 
-</select>
+        <button type="submit" class="popup">
+            Generar Nuevo Pedido
+        </button>
 
-<label>Empleado</label>
-
-<select
-name="IdEmpleado"
-required>
-
-<% Empleados.forEach(e=>{ %>
-
-<option
-value="<%= e.IdEmpleado %>">
-
-<%= e.Nombre %>
-
-</option>
-
-<% }) %>
-
-</select>
-
-<label>Fecha Pedido</label>
-
-<input
-type="date"
-name="FechaPedido"
-required>
-
-<button
-type="submit"
-class="popup">
-
- Generar Nuevo Pedido
-
-</button>
-
-</form>
+    </form>
 
 </div>
 
 </body>
-
 </html>

@@ -1094,35 +1094,40 @@ async (req,res)=>{
 });
 
 
-app.get('/pedidos/nuevo', async(req,res)=>{
+app.get('/pedidos/nuevo', async (req, res) => {
 
-    const [Clientes] =
-    await pool.query(`
+    const [Clientes] = await pool.query(`
         SELECT
-        IdCliente,
-        NombreEmpresa
+            IdCliente,
+            NombreEmpresa
         FROM cliente
         ORDER BY NombreEmpresa
     `);
 
-    const [Empleados] =
-    await pool.query(`
+    const [Empleados] = await pool.query(`
         SELECT
-        IdEmpleado,
-        CONCAT(
-            Nombres,' ',
-            Apellidos
-        ) Nombre
+            IdEmpleado,
+            CONCAT(Nombres, ' ', Apellidos) AS Nombre
         FROM empleado
+        ORDER BY Nombres
     `);
 
-    res.render(
-        'Pedidos/Nuevo',
-        {
-            Clientes,
-            Empleados
-        }
-    );
+    const [Productos] = await pool.query(`
+        SELECT
+            IdProducto,
+            NombreProducto,
+            PrecioUnidad,
+            Descuento,
+            UnidadesEnExistencia
+        FROM producto
+        ORDER BY NombreProducto
+    `);
+
+    res.render('Pedidos/Nuevo', {
+        Clientes,
+        Empleados,
+        Productos
+    });
 
 });
 
@@ -1133,10 +1138,12 @@ app.post('/pedidos/nuevo', async (req, res) => {
         const {
             IdCliente,
             IdEmpleado,
-            FechaPedido
+            FechaPedido,
+            IdProducto,
+            Cantidad
         } = req.body;
 
-        // Obtener el último número de pedido
+        // 1. Obtener último número de pedido
         const [Max] = await pool.query(`
             SELECT MAX(IdPedido) AS Ultimo
             FROM pedido
@@ -1144,9 +1151,34 @@ app.post('/pedidos/nuevo', async (req, res) => {
 
         const IdPedido = (Max[0].Ultimo || 0) + 1;
 
-        // Registrar nuevo pedido
-        await pool.query(
-            `
+        // 2. Buscar datos del producto seleccionado
+        const [Producto] = await pool.query(`
+            SELECT
+                PrecioUnidad,
+                Descuento,
+                UnidadesEnExistencia
+            FROM producto
+            WHERE IdProducto = ?
+        `, [IdProducto]);
+
+        if (Producto.length === 0) {
+            return res.send('Producto no encontrado');
+        }
+
+        const PrecioUnidad = Producto[0].PrecioUnidad;
+        const Descuento = Producto[0].Descuento || 0;
+        const StockActual = Producto[0].UnidadesEnExistencia;
+
+        if (Number(Cantidad) > Number(StockActual)) {
+            return res.send(`
+                <h2>No hay stock suficiente</h2>
+                <p>Stock disponible: ${StockActual}</p>
+                <a href="/pedidos/nuevo">Volver</a>
+            `);
+        }
+
+        // 3. Guardar encabezado del pedido
+        await pool.query(`
             INSERT INTO pedido
             (
                 IdPedido,
@@ -1155,14 +1187,41 @@ app.post('/pedidos/nuevo', async (req, res) => {
                 FechaPedido
             )
             VALUES (?,?,?,?)
-            `,
-            [
+        `, [
+            IdPedido,
+            IdCliente,
+            IdEmpleado,
+            FechaPedido
+        ]);
+
+        // 4. Guardar detalle del pedido
+        await pool.query(`
+            INSERT INTO detalles_de_pedido
+            (
                 IdPedido,
-                IdCliente,
-                IdEmpleado,
-                FechaPedido
-            ]
-        );
+                IdProducto,
+                PrecioUnidad,
+                Cantidad,
+                Descuento
+            )
+            VALUES (?,?,?,?,?)
+        `, [
+            IdPedido,
+            IdProducto,
+            PrecioUnidad,
+            Cantidad,
+            Descuento
+        ]);
+
+        // 5. Descontar stock
+        await pool.query(`
+            UPDATE producto
+            SET UnidadesEnExistencia = UnidadesEnExistencia - ?
+            WHERE IdProducto = ?
+        `, [
+            Cantidad,
+            IdProducto
+        ]);
 
         res.redirect('/pedidos/buscar');
 
