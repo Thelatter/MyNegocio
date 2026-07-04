@@ -274,25 +274,25 @@ app.get('/reportes/categorias/pdf', async (req, res) => {
 
 });
 
-app.get('/reportes/categorias', async (req, res) => {
-    const [Categorias] = await pool.query(`
-        SELECT
-        c.IdCategoria,
-        c.NombreCategoria,
-        COUNT(p.IdProducto) AS TotalProductos
-        FROM categoria c
-        LEFT JOIN producto p
-        ON c.IdCategoria=p.IdCategoria
-        GROUP BY
-        c.IdCategoria,
-        c.NombreCategoria
-    `);
+//app.get('/reportes/categorias', async (req, res) => {
+//    const [Categorias] = await pool.query(`
+//        SELECT
+//        c.IdCategoria,
+ //       c.NombreCategoria,
+  //      COUNT(p.IdProducto) AS TotalProductos
+   //     FROM categoria c
+    //    LEFT JOIN producto p
+      //  ON c.IdCategoria=p.IdCategoria
+        //GROUP BY
+       // c.IdCategoria,
+        //c.NombreCategoria
+//    `);
 
-    res.render('Reportes/Categorias', {
-        Categorias
-    });
+  //  res.render('Reportes/Categorias', {
+    //    Categorias
+ //   });
 
-});
+//});
 
 
 app.get('/reportes/catalogo/pdf/:id', async (req, res) => {
