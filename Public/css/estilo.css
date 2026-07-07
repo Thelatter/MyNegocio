@@ -933,3 +933,68 @@ h1{
     }
 
 }
+
+
+/* ==========================
+   MODULO EMPLEO
+========================== */
+
+.acciones-empleo{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-bottom:25px;
+}
+
+.seccion-empleo{
+    margin-top:30px;
+}
+
+.oculto{
+    display:none;
+}
+
+.alerta-error{
+    background:#fee2e2;
+    color:#991b1b;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+    font-weight:600;
+}
+
+.btn-eliminar{
+    background:#ef4444 !important;
+}
+
+.btn-pdf{
+    background:#dc2626 !important;
+}
+
+.bloque-impresion{
+    margin-bottom:30px;
+}
+
+@media print{
+
+    .menu,
+    .acciones-empleo,
+    .form-reporte,
+    .seccion-empleo{
+        display:none !important;
+    }
+
+    body{
+        background:white;
+    }
+
+    .contenedor{
+        width:100%;
+        margin:0;
+    }
+
+    .bloque-impresion{
+        box-shadow:none;
+        border:none;
+    }
+}

@@ -114,21 +114,7 @@ app.get('/clientes', async (req, res) => {
     });
 });
 
-// ==========================
-// EMPLEADOS
-// ==========================
 
-app.get('/empleados', async (req, res) => {
-
-    const [Empleados] = await pool.query(`
-        SELECT *
-        FROM empleado
-    `);
-
-    res.render('Empleados/Listar', {
-        Empleados
-    });
-});
 
 // ==========================
 // BUSCAR PEDIDO
@@ -1447,7 +1433,425 @@ app.post('/pedidos/nuevo', async (req, res) => {
 
 });
 
+// ==========================
+// EMPLEO
+// ==========================
 
+app.get('/empleo', async (req, res) => {
+
+    const [Empresas] = await pool.query(`
+        SELECT *
+        FROM empresa_empleo
+        ORDER BY RazonSocial
+    `);
+
+    res.render('Empleo/Index', {
+        Empresas,
+        Empresa: null,
+        Ofertas: [],
+        Oferta: null,
+        Conocimientos: [],
+        mensaje: null
+    });
+
+});
+
+app.post('/empleo/buscar-empresa', async (req, res) => {
+
+    const IdEmpresa = req.body.IdEmpresa;
+
+    const [Empresas] = await pool.query(`
+        SELECT *
+        FROM empresa_empleo
+        ORDER BY RazonSocial
+    `);
+
+    const [Empresa] = await pool.query(`
+        SELECT *
+        FROM empresa_empleo
+        WHERE IdEmpresa = ?
+    `, [IdEmpresa]);
+
+    const [Ofertas] = await pool.query(`
+        SELECT *
+        FROM oferta_empleo
+        WHERE IdEmpresa = ?
+        ORDER BY IdOferta
+    `, [IdEmpresa]);
+
+    res.render('Empleo/Index', {
+        Empresas,
+        Empresa: Empresa[0] || null,
+        Ofertas,
+        Oferta: null,
+        Conocimientos: [],
+        mensaje: null
+    });
+
+});
+
+app.post('/empleo/buscar-oferta', async (req, res) => {
+
+    const IdOferta = req.body.IdOferta;
+
+    const [Empresas] = await pool.query(`
+        SELECT *
+        FROM empresa_empleo
+        ORDER BY RazonSocial
+    `);
+
+    const [Oferta] = await pool.query(`
+        SELECT
+            o.*,
+            e.RazonSocial,
+            e.Direccion,
+            e.Distrito
+        FROM oferta_empleo o
+        INNER JOIN empresa_empleo e
+        ON o.IdEmpresa = e.IdEmpresa
+        WHERE o.IdOferta = ?
+    `, [IdOferta]);
+
+    if (Oferta.length === 0) {
+        return res.render('Empleo/Index', {
+            Empresas,
+            Empresa: null,
+            Ofertas: [],
+            Oferta: null,
+            Conocimientos: [],
+            mensaje: 'No se encontró la oferta de empleo'
+        });
+    }
+
+    const [Empresa] = await pool.query(`
+        SELECT *
+        FROM empresa_empleo
+        WHERE IdEmpresa = ?
+    `, [Oferta[0].IdEmpresa]);
+
+    const [Ofertas] = await pool.query(`
+        SELECT *
+        FROM oferta_empleo
+        WHERE IdEmpresa = ?
+        ORDER BY IdOferta
+    `, [Oferta[0].IdEmpresa]);
+
+    const [Conocimientos] = await pool.query(`
+        SELECT *
+        FROM oferta_conocimiento
+        WHERE IdOferta = ?
+    `, [IdOferta]);
+
+    res.render('Empleo/Index', {
+        Empresas,
+        Empresa: Empresa[0],
+        Ofertas,
+        Oferta: Oferta[0],
+        Conocimientos,
+        mensaje: null
+    });
+
+});
+
+app.post('/empleo/crear', async (req, res) => {
+
+    const conexion = await pool.getConnection();
+
+    try {
+
+        await conexion.beginTransaction();
+
+        const {
+            IdEmpresa,
+            RazonSocial,
+            Direccion,
+            Distrito,
+            IdOferta,
+            Puesto,
+            Experiencia,
+            PagoMes,
+            Formacion,
+            Conocimientos
+        } = req.body;
+
+        await conexion.query(`
+            INSERT INTO empresa_empleo
+            (
+                IdEmpresa,
+                RazonSocial,
+                Direccion,
+                Distrito
+            )
+            VALUES (?,?,?,?)
+        `, [
+            IdEmpresa,
+            RazonSocial,
+            Direccion,
+            Distrito
+        ]);
+
+        await conexion.query(`
+            INSERT INTO oferta_empleo
+            (
+                IdOferta,
+                IdEmpresa,
+                Puesto,
+                Experiencia,
+                PagoMes,
+                Formacion
+            )
+            VALUES (?,?,?,?,?,?)
+        `, [
+            IdOferta,
+            IdEmpresa,
+            Puesto,
+            Experiencia,
+            PagoMes,
+            Formacion
+        ]);
+
+        const listaConocimientos = Conocimientos
+            .split(',')
+            .map(c => c.trim())
+            .filter(c => c !== '');
+
+        for (const conocimiento of listaConocimientos) {
+            await conexion.query(`
+                INSERT INTO oferta_conocimiento
+                (
+                    IdOferta,
+                    Conocimiento
+                )
+                VALUES (?,?)
+            `, [
+                IdOferta,
+                conocimiento
+            ]);
+        }
+
+        await conexion.commit();
+
+        res.redirect('/empleo');
+
+    } catch (error) {
+
+        await conexion.rollback();
+
+        res.send(`
+            <h2>Error al crear empresa y oferta</h2>
+            <p>${error.message}</p>
+            <a href="/empleo">Volver</a>
+        `);
+
+    } finally {
+
+        conexion.release();
+
+    }
+
+});
+
+app.post('/empleo/agregar-oferta', async (req, res) => {
+
+    const conexion = await pool.getConnection();
+
+    try {
+
+        await conexion.beginTransaction();
+
+        const {
+            IdEmpresa,
+            IdOferta,
+            Puesto,
+            Experiencia,
+            PagoMes,
+            Formacion,
+            Conocimientos
+        } = req.body;
+
+        await conexion.query(`
+            INSERT INTO oferta_empleo
+            (
+                IdOferta,
+                IdEmpresa,
+                Puesto,
+                Experiencia,
+                PagoMes,
+                Formacion
+            )
+            VALUES (?,?,?,?,?,?)
+        `, [
+            IdOferta,
+            IdEmpresa,
+            Puesto,
+            Experiencia,
+            PagoMes,
+            Formacion
+        ]);
+
+        const listaConocimientos = Conocimientos
+            .split(',')
+            .map(c => c.trim())
+            .filter(c => c !== '');
+
+        for (const conocimiento of listaConocimientos) {
+            await conexion.query(`
+                INSERT INTO oferta_conocimiento
+                (
+                    IdOferta,
+                    Conocimiento
+                )
+                VALUES (?,?)
+            `, [
+                IdOferta,
+                conocimiento
+            ]);
+        }
+
+        await conexion.commit();
+
+        res.redirect('/empleo');
+
+    } catch (error) {
+
+        await conexion.rollback();
+
+        res.send(`
+            <h2>Error al agregar oferta</h2>
+            <p>${error.message}</p>
+            <a href="/empleo">Volver</a>
+        `);
+
+    } finally {
+
+        conexion.release();
+
+    }
+
+});
+
+app.post('/empleo/actualizar', async (req, res) => {
+
+    const conexion = await pool.getConnection();
+
+    try {
+
+        await conexion.beginTransaction();
+
+        const {
+            IdEmpresa,
+            RazonSocial,
+            Direccion,
+            Distrito,
+            IdOferta,
+            Puesto,
+            Experiencia,
+            PagoMes,
+            Formacion,
+            Conocimientos
+        } = req.body;
+
+        await conexion.query(`
+            UPDATE empresa_empleo
+            SET
+                RazonSocial = ?,
+                Direccion = ?,
+                Distrito = ?
+            WHERE IdEmpresa = ?
+        `, [
+            RazonSocial,
+            Direccion,
+            Distrito,
+            IdEmpresa
+        ]);
+
+        await conexion.query(`
+            UPDATE oferta_empleo
+            SET
+                Puesto = ?,
+                Experiencia = ?,
+                PagoMes = ?,
+                Formacion = ?
+            WHERE IdOferta = ?
+        `, [
+            Puesto,
+            Experiencia,
+            PagoMes,
+            Formacion,
+            IdOferta
+        ]);
+
+        await conexion.query(`
+            DELETE FROM oferta_conocimiento
+            WHERE IdOferta = ?
+        `, [IdOferta]);
+
+        const listaConocimientos = Conocimientos
+            .split(',')
+            .map(c => c.trim())
+            .filter(c => c !== '');
+
+        for (const conocimiento of listaConocimientos) {
+            await conexion.query(`
+                INSERT INTO oferta_conocimiento
+                (
+                    IdOferta,
+                    Conocimiento
+                )
+                VALUES (?,?)
+            `, [
+                IdOferta,
+                conocimiento
+            ]);
+        }
+
+        await conexion.commit();
+
+        res.redirect('/empleo');
+
+    } catch (error) {
+
+        await conexion.rollback();
+
+        res.send(`
+            <h2>Error al actualizar</h2>
+            <p>${error.message}</p>
+            <a href="/empleo">Volver</a>
+        `);
+
+    } finally {
+
+        conexion.release();
+
+    }
+
+});
+
+app.post('/empleo/eliminar-empresa', async (req, res) => {
+
+    const IdEmpresa = req.body.IdEmpresa;
+
+    await pool.query(`
+        DELETE FROM empresa_empleo
+        WHERE IdEmpresa = ?
+    `, [IdEmpresa]);
+
+    res.redirect('/empleo');
+
+});
+
+app.post('/empleo/eliminar-oferta', async (req, res) => {
+
+    const IdOferta = req.body.IdOferta;
+
+    await pool.query(`
+        DELETE FROM oferta_empleo
+        WHERE IdOferta = ?
+    `, [IdOferta]);
+
+    res.redirect('/empleo');
+
+});
 // ==========================
 // SERVIDOR
 // ==========================
