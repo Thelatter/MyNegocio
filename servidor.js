@@ -1439,20 +1439,39 @@ app.post('/pedidos/nuevo', async (req, res) => {
 
 app.get('/empleo', async (req, res) => {
 
-    const [Empresas] = await pool.query(`
-        SELECT *
-        FROM empresa_empleo
-        ORDER BY RazonSocial
-    `);
+    try {
 
-    res.render('Empleo/Index', {
-        Empresas,
-        Empresa: null,
-        Ofertas: [],
-        Oferta: null,
-        Conocimientos: [],
-        mensaje: null
-    });
+        console.log('ENTRANDO A /empleo');
+
+        const [Empresas] = await pool.query(`
+            SELECT *
+            FROM empresa_empleo
+            ORDER BY RazonSocial
+        `);
+
+        console.log('EMPRESAS ENCONTRADAS:', Empresas.length);
+
+        res.render('Empleo/Index', {
+            Empresas,
+            Empresa: null,
+            Ofertas: [],
+            Oferta: null,
+            Conocimientos: [],
+            mensaje: null
+        });
+
+    } catch (error) {
+
+        console.error('ERROR EN /empleo:');
+        console.error(error);
+
+        res.send(`
+            <h1>Error en /empleo</h1>
+            <p>${error.message}</p>
+            <a href="/">Volver al inicio</a>
+        `);
+
+    }
 
 });
 
