@@ -21,20 +21,28 @@
         </div>
     <% } %>
 
+    <!-- BOTONES PRINCIPALES -->
     <div class="acciones-empleo">
-        <button type="button" onclick="mostrarSeccion('crear')" class="boton">
+
+        <button type="button" onclick="abrirModal('modalCrear')" class="boton">
             Nueva Empresa + Oferta
         </button>
 
-        <button type="button" onclick="mostrarSeccion('agregar')" class="boton">
+        <button type="button" onclick="abrirModal('modalAgregar')" class="boton">
             Añadir Oferta
         </button>
 
-        <button type="button" onclick="mostrarSeccion('actualizar')" class="boton">
-            Actualizar
-        </button>
+        <% if (Oferta) { %>
+            <button type="button" onclick="abrirModal('modalActualizar')" class="boton">
+                Actualizar
+            </button>
+        <% } else { %>
+            <button type="button" onclick="alert('Primero busca una oferta por ID para poder actualizarla.')" class="boton">
+                Actualizar
+            </button>
+        <% } %>
 
-        <button type="button" onclick="mostrarSeccion('eliminar')" class="boton btn-eliminar">
+        <button type="button" onclick="abrirModal('modalEliminar')" class="boton btn-eliminar">
             Eliminar
         </button>
 
@@ -43,8 +51,10 @@
                 Imprimir
             </button>
         <% } %>
+
     </div>
 
+    <!-- BUSCADORES -->
     <div class="form-reporte">
 
         <form action="/empleo/buscar-empresa" method="POST" class="grupo-form">
@@ -81,6 +91,7 @@
 
     </div>
 
+    <!-- EMPRESAS REGISTRADAS -->
     <div class="factura">
 
         <h2>Empresas Registradas</h2>
@@ -111,6 +122,7 @@
 
     </div>
 
+    <!-- DATOS DE EMPRESA BUSCADA -->
     <% if (Empresa) { %>
 
         <div class="factura bloque-impresion">
@@ -118,6 +130,7 @@
             <h2>Datos de la Empresa</h2>
 
             <div class="datos-pedido">
+
                 <div>
                     <strong>Razón Social</strong>
                     <p><%= Empresa.RazonSocial %></p>
@@ -132,6 +145,7 @@
                     <strong>Distrito</strong>
                     <p><%= Empresa.Distrito %></p>
                 </div>
+
             </div>
 
             <h2>Ofertas de esta Empresa</h2>
@@ -166,6 +180,7 @@
 
     <% } %>
 
+    <!-- OFERTA BUSCADA -->
     <% if (Oferta) { %>
 
         <div class="factura bloque-impresion">
@@ -242,7 +257,15 @@
 
     <% } %>
 
-    <div id="crear" class="seccion-empleo oculto">
+</div>
+
+<!-- MODAL CREAR EMPRESA + OFERTA -->
+<div id="modalCrear" class="modal-empleo oculto">
+    <div class="modal-contenido">
+
+        <button type="button" class="cerrar-modal" onclick="cerrarModal('modalCrear')">
+            ×
+        </button>
 
         <h2>Nueva Empresa con Oferta</h2>
 
@@ -293,8 +316,15 @@
         </form>
 
     </div>
+</div>
 
-    <div id="agregar" class="seccion-empleo oculto">
+<!-- MODAL AÑADIR OFERTA -->
+<div id="modalAgregar" class="modal-empleo oculto">
+    <div class="modal-contenido">
+
+        <button type="button" class="cerrar-modal" onclick="cerrarModal('modalAgregar')">
+            ×
+        </button>
 
         <h2>Añadir Oferta a Empresa Existente</h2>
 
@@ -338,8 +368,15 @@
         </form>
 
     </div>
+</div>
 
-    <div id="actualizar" class="seccion-empleo oculto">
+<!-- MODAL ACTUALIZAR -->
+<div id="modalActualizar" class="modal-empleo oculto">
+    <div class="modal-contenido">
+
+        <button type="button" class="cerrar-modal" onclick="cerrarModal('modalActualizar')">
+            ×
+        </button>
 
         <h2>Actualizar Empresa y Oferta</h2>
 
@@ -400,8 +437,15 @@
         <% } %>
 
     </div>
+</div>
 
-    <div id="eliminar" class="seccion-empleo oculto">
+<!-- MODAL ELIMINAR -->
+<div id="modalEliminar" class="modal-empleo oculto">
+    <div class="modal-contenido">
+
+        <button type="button" class="cerrar-modal" onclick="cerrarModal('modalEliminar')">
+            ×
+        </button>
 
         <h2>Eliminar</h2>
 
@@ -447,26 +491,36 @@
         </div>
 
     </div>
-
 </div>
 
 <script>
 
-function mostrarSeccion(id) {
+function abrirModal(id) {
+    const modal = document.getElementById(id);
 
-    const secciones = document.querySelectorAll('.seccion-empleo');
+    if (modal) {
+        modal.classList.remove('oculto');
+        modal.classList.add('mostrar-modal');
+    }
+}
 
-    secciones.forEach(function(seccion) {
-        seccion.classList.add('oculto');
-    });
+function cerrarModal(id) {
+    const modal = document.getElementById(id);
 
-    const actual = document.getElementById(id);
+    if (modal) {
+        modal.classList.add('oculto');
+        modal.classList.remove('mostrar-modal');
+    }
+}
 
-    if (actual) {
-        actual.classList.remove('oculto');
+window.addEventListener('click', function(e) {
+
+    if (e.target.classList.contains('modal-empleo')) {
+        e.target.classList.add('oculto');
+        e.target.classList.remove('mostrar-modal');
     }
 
-}
+});
 
 </script>
 
