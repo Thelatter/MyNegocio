@@ -1451,14 +1451,10 @@ app.get('/empleo', async (req, res) => {
 
         console.log('EMPRESAS ENCONTRADAS:', Empresas.length);
 
-        res.render('Empleo/Index', {
-            Empresas,
-            Empresa: null,
-            Ofertas: [],
-            Oferta: null,
-            Conocimientos: [],
-            mensaje: null
-        });
+        res.send(`
+    <h1>Empleo funcionando</h1>
+    <p>Empresas encontradas: ${Empresas.length}</p>
+`);
 
     } catch (error) {
 
