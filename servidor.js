@@ -1458,6 +1458,24 @@ app.get('/empleo', async (req, res) => {
             Oferta: null,
             Conocimientos: [],
             mensaje: null
+        }, (error, html) => {
+
+            if (error) {
+
+                console.error('ERROR AL RENDERIZAR Empleo/Index:');
+                console.error(error);
+
+                return res.send(`
+                    <h1>Error en la vista Empleo/Index.ejs</h1>
+                    <pre>${error.message}</pre>
+                    <pre>${error.stack}</pre>
+                `);
+            }
+
+            console.log('VISTA EMPLEO RENDERIZADA CORRECTAMENTE');
+
+            res.send(html);
+
         });
 
     } catch (error) {
@@ -1467,11 +1485,37 @@ app.get('/empleo', async (req, res) => {
 
         res.send(`
             <h1>Error en /empleo</h1>
-            <p>${error.message}</p>
-            <a href="/">Volver al inicio</a>
+            <pre>${error.message}</pre>
+            <pre>${error.stack}</pre>
         `);
 
     }
+
+});
+app.get('/empleo-prueba', async (req, res) => {
+
+    res.render('Empleo/Index', {
+        Empresas: [],
+        Empresa: null,
+        Ofertas: [],
+        Oferta: null,
+        Conocimientos: [],
+        mensaje: null
+    }, (error, html) => {
+
+        if (error) {
+            console.error(error);
+
+            return res.send(`
+                <h1>Error en empleo-prueba</h1>
+                <pre>${error.message}</pre>
+                <pre>${error.stack}</pre>
+            `);
+        }
+
+        res.send(html);
+
+    });
 
 });
 

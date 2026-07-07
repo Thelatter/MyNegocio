@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Empleo</title>
+</head>
+
+<body>
+
+<h1>Vista Empleo cargada</h1>
+
+<p>Total empresas: <%= Empresas.length %></p>
+
+<ul>
+    <% Empresas.forEach(e => { %>
+        <li>
+            <%= e.IdEmpresa %> -
+            <%= e.RazonSocial %> -
+            <%= e.Distrito %>
+        </li>
+    <% }) %>
+</ul>
+
+</body>
+</html>
