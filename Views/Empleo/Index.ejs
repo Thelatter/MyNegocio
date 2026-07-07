@@ -1,25 +1,475 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
-    <title>Empleo</title>
+    <title>Ofertas de Empleo</title>
+    <link rel="stylesheet" href="/css/estilo.css">
 </head>
 
 <body>
 
-<h1>Vista Empleo cargada</h1>
+<%- include('../Partials/Menu') %>
 
-<p>Total empresas: <%= Empresas.length %></p>
+<div class="contenedor">
 
-<ul>
-    <% Empresas.forEach(e => { %>
-        <li>
-            <%= e.IdEmpresa %> -
-            <%= e.RazonSocial %> -
-            <%= e.Distrito %>
-        </li>
-    <% }) %>
-</ul>
+    <h1>Ofertas de Empleo</h1>
+
+    <% if (mensaje) { %>
+        <div class="alerta-error">
+            <%= mensaje %>
+        </div>
+    <% } %>
+
+    <div class="acciones-empleo">
+        <button type="button" onclick="mostrarSeccion('crear')" class="boton">
+            Nueva Empresa + Oferta
+        </button>
+
+        <button type="button" onclick="mostrarSeccion('agregar')" class="boton">
+            Añadir Oferta
+        </button>
+
+        <button type="button" onclick="mostrarSeccion('actualizar')" class="boton">
+            Actualizar
+        </button>
+
+        <button type="button" onclick="mostrarSeccion('eliminar')" class="boton btn-eliminar">
+            Eliminar
+        </button>
+
+        <% if (Oferta) { %>
+            <button type="button" onclick="window.print()" class="boton btn-pdf">
+                Imprimir
+            </button>
+        <% } %>
+    </div>
+
+    <div class="form-reporte">
+
+        <form action="/empleo/buscar-empresa" method="POST" class="grupo-form">
+            <label>Buscar Empresa</label>
+
+            <select name="IdEmpresa" required>
+                <option value="">Seleccione empresa</option>
+
+                <% Empresas.forEach(e => { %>
+                    <option value="<%= e.IdEmpresa %>">
+                        <%= e.IdEmpresa %> - <%= e.RazonSocial %>
+                    </option>
+                <% }) %>
+            </select>
+
+            <button type="submit" class="rep">
+                Buscar Empresa
+            </button>
+        </form>
+
+        <form action="/empleo/buscar-oferta" method="POST" class="grupo-form">
+            <label>Buscar Oferta por ID</label>
+
+            <input
+                type="number"
+                name="IdOferta"
+                placeholder="Ejemplo: 101"
+                required>
+
+            <button type="submit" class="rep">
+                Buscar Oferta
+            </button>
+        </form>
+
+    </div>
+
+    <div class="factura">
+
+        <h2>Empresas Registradas</h2>
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Empresa</th>
+                        <th>Razón Social</th>
+                        <th>Dirección</th>
+                        <th>Distrito</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% Empresas.forEach(e => { %>
+                        <tr>
+                            <td><%= e.IdEmpresa %></td>
+                            <td><%= e.RazonSocial %></td>
+                            <td><%= e.Direccion %></td>
+                            <td><%= e.Distrito %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <% if (Empresa) { %>
+
+        <div class="factura bloque-impresion">
+
+            <h2>Datos de la Empresa</h2>
+
+            <div class="datos-pedido">
+                <div>
+                    <strong>Razón Social</strong>
+                    <p><%= Empresa.RazonSocial %></p>
+                </div>
+
+                <div>
+                    <strong>Dirección</strong>
+                    <p><%= Empresa.Direccion %></p>
+                </div>
+
+                <div>
+                    <strong>Distrito</strong>
+                    <p><%= Empresa.Distrito %></p>
+                </div>
+            </div>
+
+            <h2>Ofertas de esta Empresa</h2>
+
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Oferta</th>
+                            <th>Puesto</th>
+                            <th>Experiencia</th>
+                            <th>Pago Mensual</th>
+                            <th>Formación</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% Ofertas.forEach(o => { %>
+                            <tr>
+                                <td><%= o.IdOferta %></td>
+                                <td><%= o.Puesto %></td>
+                                <td><%= o.Experiencia %> años</td>
+                                <td>S/. <%= Number(o.PagoMes).toFixed(2) %></td>
+                                <td><%= o.Formacion %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    <% } %>
+
+    <% if (Oferta) { %>
+
+        <div class="factura bloque-impresion">
+
+            <h2>Reporte de Oferta Seleccionada</h2>
+
+            <div class="datos-pedido">
+
+                <div>
+                    <strong>ID Oferta</strong>
+                    <p><%= Oferta.IdOferta %></p>
+                </div>
+
+                <div>
+                    <strong>Empresa</strong>
+                    <p><%= Oferta.RazonSocial %></p>
+                </div>
+
+                <div>
+                    <strong>Puesto</strong>
+                    <p><%= Oferta.Puesto %></p>
+                </div>
+
+                <div>
+                    <strong>Dirección</strong>
+                    <p><%= Oferta.Direccion %></p>
+                </div>
+
+                <div>
+                    <strong>Distrito</strong>
+                    <p><%= Oferta.Distrito %></p>
+                </div>
+
+                <div>
+                    <strong>Experiencia</strong>
+                    <p><%= Oferta.Experiencia %> años</p>
+                </div>
+
+                <div>
+                    <strong>Pago Mensual</strong>
+                    <p>S/. <%= Number(Oferta.PagoMes).toFixed(2) %></p>
+                </div>
+
+                <div>
+                    <strong>Formación Académica</strong>
+                    <p><%= Oferta.Formacion %></p>
+                </div>
+
+            </div>
+
+            <h3>Conocimientos Requeridos</h3>
+
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nro</th>
+                            <th>Conocimiento</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% Conocimientos.forEach((c, index) => { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+                                <td><%= c.Conocimiento %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    <% } %>
+
+    <div id="crear" class="seccion-empleo oculto">
+
+        <h2>Nueva Empresa con Oferta</h2>
+
+        <form action="/empleo/crear" method="POST" class="formulario-card">
+
+            <h3>Datos de Empresa</h3>
+
+            <label>ID Empresa</label>
+            <input type="number" name="IdEmpresa" required>
+
+            <label>Razón Social</label>
+            <input type="text" name="RazonSocial" required>
+
+            <label>Dirección</label>
+            <input type="text" name="Direccion" required>
+
+            <label>Distrito</label>
+            <input type="text" name="Distrito" required>
+
+            <h3>Datos de Oferta</h3>
+
+            <label>ID Oferta</label>
+            <input type="number" name="IdOferta" required>
+
+            <label>Puesto</label>
+            <input type="text" name="Puesto" required>
+
+            <label>Experiencia requerida</label>
+            <input type="number" name="Experiencia" required>
+
+            <label>Pago mensual</label>
+            <input type="number" step="0.01" name="PagoMes" required>
+
+            <label>Formación académica</label>
+            <input type="text" name="Formacion" required>
+
+            <label>Conocimientos</label>
+            <input
+                type="text"
+                name="Conocimientos"
+                placeholder="Python, Java, MongoDB"
+                required>
+
+            <button type="submit" class="popup">
+                Guardar
+            </button>
+
+        </form>
+
+    </div>
+
+    <div id="agregar" class="seccion-empleo oculto">
+
+        <h2>Añadir Oferta a Empresa Existente</h2>
+
+        <form action="/empleo/agregar-oferta" method="POST" class="formulario-card">
+
+            <label>Empresa</label>
+            <select name="IdEmpresa" required>
+                <% Empresas.forEach(e => { %>
+                    <option value="<%= e.IdEmpresa %>">
+                        <%= e.RazonSocial %>
+                    </option>
+                <% }) %>
+            </select>
+
+            <label>ID Oferta</label>
+            <input type="number" name="IdOferta" required>
+
+            <label>Puesto</label>
+            <input type="text" name="Puesto" required>
+
+            <label>Experiencia requerida</label>
+            <input type="number" name="Experiencia" required>
+
+            <label>Pago mensual</label>
+            <input type="number" step="0.01" name="PagoMes" required>
+
+            <label>Formación académica</label>
+            <input type="text" name="Formacion" required>
+
+            <label>Conocimientos</label>
+            <input
+                type="text"
+                name="Conocimientos"
+                placeholder="Node.js, MySQL, Express"
+                required>
+
+            <button type="submit" class="popup">
+                Añadir Oferta
+            </button>
+
+        </form>
+
+    </div>
+
+    <div id="actualizar" class="seccion-empleo oculto">
+
+        <h2>Actualizar Empresa y Oferta</h2>
+
+        <% if (Oferta) { %>
+
+            <form action="/empleo/actualizar" method="POST" class="formulario-card">
+
+                <input type="hidden" name="IdEmpresa" value="<%= Oferta.IdEmpresa %>">
+                <input type="hidden" name="IdOferta" value="<%= Oferta.IdOferta %>">
+
+                <h3>Empresa</h3>
+
+                <label>Razón Social</label>
+                <input type="text" name="RazonSocial" value="<%= Oferta.RazonSocial %>" required>
+
+                <label>Dirección</label>
+                <input type="text" name="Direccion" value="<%= Oferta.Direccion %>" required>
+
+                <label>Distrito</label>
+                <input type="text" name="Distrito" value="<%= Oferta.Distrito %>" required>
+
+                <h3>Oferta</h3>
+
+                <label>Puesto</label>
+                <input type="text" name="Puesto" value="<%= Oferta.Puesto %>" required>
+
+                <label>Experiencia</label>
+                <input type="number" name="Experiencia" value="<%= Oferta.Experiencia %>" required>
+
+                <label>Pago mensual</label>
+                <input
+                    type="number"
+                    step="0.01"
+                    name="PagoMes"
+                    value="<%= Number(Oferta.PagoMes).toFixed(2) %>"
+                    required>
+
+                <label>Formación</label>
+                <input type="text" name="Formacion" value="<%= Oferta.Formacion %>" required>
+
+                <label>Conocimientos</label>
+                <input
+                    type="text"
+                    name="Conocimientos"
+                    value="<%= Conocimientos.map(c => c.Conocimiento).join(', ') %>"
+                    required>
+
+                <button type="submit" class="popup">
+                    Actualizar
+                </button>
+
+            </form>
+
+        <% } else { %>
+
+            <p>Primero busca una oferta por ID para poder actualizarla.</p>
+
+        <% } %>
+
+    </div>
+
+    <div id="eliminar" class="seccion-empleo oculto">
+
+        <h2>Eliminar</h2>
+
+        <div class="formulario-card">
+
+            <form
+                action="/empleo/eliminar-empresa"
+                method="POST"
+                onsubmit="return confirm('¿Seguro que deseas eliminar esta empresa y todas sus ofertas?')">
+
+                <label>Eliminar Empresa</label>
+
+                <select name="IdEmpresa" required>
+                    <% Empresas.forEach(e => { %>
+                        <option value="<%= e.IdEmpresa %>">
+                            <%= e.RazonSocial %>
+                        </option>
+                    <% }) %>
+                </select>
+
+                <button type="submit" class="btn-quitar">
+                    Eliminar Empresa
+                </button>
+
+            </form>
+
+            <hr>
+
+            <form
+                action="/empleo/eliminar-oferta"
+                method="POST"
+                onsubmit="return confirm('¿Seguro que deseas eliminar esta oferta?')">
+
+                <label>Eliminar Oferta por ID</label>
+                <input type="number" name="IdOferta" required>
+
+                <button type="submit" class="btn-quitar">
+                    Eliminar Oferta
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function mostrarSeccion(id) {
+
+    const secciones = document.querySelectorAll('.seccion-empleo');
+
+    secciones.forEach(function(seccion) {
+        seccion.classList.add('oculto');
+    });
+
+    const actual = document.getElementById(id);
+
+    if (actual) {
+        actual.classList.remove('oculto');
+    }
+
+}
+
+</script>
 
 </body>
+
 </html>

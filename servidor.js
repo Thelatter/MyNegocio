@@ -1441,15 +1441,11 @@ app.get('/empleo', async (req, res) => {
 
     try {
 
-        console.log('ENTRANDO A /empleo');
-
         const [Empresas] = await pool.query(`
             SELECT *
             FROM empresa_empleo
             ORDER BY RazonSocial
         `);
-
-        console.log('EMPRESAS ENCONTRADAS:', Empresas.length);
 
         res.render('Empleo/Index', {
             Empresas,
@@ -1458,24 +1454,6 @@ app.get('/empleo', async (req, res) => {
             Oferta: null,
             Conocimientos: [],
             mensaje: null
-        }, (error, html) => {
-
-            if (error) {
-
-                console.error('ERROR AL RENDERIZAR Empleo/Index:');
-                console.error(error);
-
-                return res.send(`
-                    <h1>Error en la vista Empleo/Index.ejs</h1>
-                    <pre>${error.message}</pre>
-                    <pre>${error.stack}</pre>
-                `);
-            }
-
-            console.log('VISTA EMPLEO RENDERIZADA CORRECTAMENTE');
-
-            res.send(html);
-
         });
 
     } catch (error) {
@@ -1485,8 +1463,7 @@ app.get('/empleo', async (req, res) => {
 
         res.send(`
             <h1>Error en /empleo</h1>
-            <pre>${error.message}</pre>
-            <pre>${error.stack}</pre>
+            <p>${error.message}</p>
         `);
 
     }
