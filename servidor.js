@@ -61,7 +61,9 @@ async function conectarMongo() {
     }
 }
 
-conectarMongo();app.get('/empleo-mongo-test', async (req, res) => {
+conectarMongo();
+
+app.get('/empleo-mongo-test', async (req, res) => {
     try {
         const ofertas = await ofertasMongo.find({}).toArray();
 
