@@ -61,7 +61,22 @@ async function conectarMongo() {
     }
 }
 
-conectarMongo();
+conectarMongo();app.get('/empleo-mongo-test', async (req, res) => {
+    try {
+        const ofertas = await ofertasMongo.find({}).toArray();
+
+        res.send(`
+            <h1>MongoDB conectado</h1>
+            <p>Ofertas encontradas: ${ofertas.length}</p>
+        `);
+
+    } catch (error) {
+        res.send(`
+            <h1>Error MongoDB</h1>
+            <p>${error.message}</p>
+        `);
+    }
+});
 //const pool = mysql.createPool({
  //   host: 'localhost',
  //   port: 3307,
@@ -1916,6 +1931,34 @@ app.post('/empleo/eliminar-oferta', async (req, res) => {
     res.redirect('/empleo');
 
 });
+
+
+// ==========================
+// PRUEBA MONGODB
+// ==========================
+
+app.get('/empleo-mongo-test', async (req, res) => {
+    try {
+
+        const ofertas = await ofertasMongo.find({}).toArray();
+
+        res.send(`
+            <h1>MongoDB conectado</h1>
+            <p>Ofertas encontradas: ${ofertas.length}</p>
+        `);
+
+    } catch (error) {
+
+        console.error('ERROR EN /empleo-mongo-test');
+        console.error(error);
+
+        res.send(`
+            <h1>Error MongoDB</h1>
+            <p>${error.message}</p>
+        `);
+
+    }
+});
 // ==========================
 // SERVIDOR
 // ==========================
@@ -1928,3 +1971,4 @@ app.listen(PORT, () => {
 );
 
 });
+
