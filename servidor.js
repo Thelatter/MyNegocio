@@ -1936,6 +1936,278 @@ app.post('/empleo/eliminar-oferta', async (req, res) => {
 
 
 // ==========================
+// BUSQUEDA DE OFERTAS POR CONOCIMIENTOS
+// ==========================
+
+function construirFiltroConocimientos(texto, operador) {
+
+    const conocimientos = texto
+        .split(',')
+        .map(c => c.trim())
+        .filter(c => c !== '');
+
+    if (conocimientos.length === 0) {
+        return {};
+    }
+
+    if (operador === 'AND') {
+
+        return {
+            $and: conocimientos.map(c => ({
+                'Requisitos.Conocimientos': {
+                    $regex: c,
+                    $options: 'i'
+                }
+            }))
+        };
+
+    }
+
+    return {
+        $or: conocimientos.map(c => ({
+            'Requisitos.Conocimientos': {
+                $regex: c,
+                $options: 'i'
+            }
+        }))
+    };
+}
+
+app.get('/busqueda-ofertas', async (req, res) => {
+
+    res.render('EmpleoMongo/BusquedaOfertas', {
+        Ofertas: [],
+        conocimientos: '',
+        operador: 'OR',
+        mensaje: null
+    });
+
+});
+
+app.post('/busqueda-ofertas', async (req, res) => {
+
+    try {
+
+        const conocimientos = req.body.conocimientos || '';
+        const operador = req.body.operador || 'OR';
+
+        const filtro = construirFiltroConocimientos(
+            conocimientos,
+            operador
+        );
+
+        const Ofertas = await ofertasMongo
+            .find(filtro)
+            .sort({ NroId: 1 })
+            .toArray();
+
+        res.render('EmpleoMongo/BusquedaOfertas', {
+            Ofertas,
+            conocimientos,
+            operador,
+            mensaje: Ofertas.length === 0
+                ? 'No se encontraron ofertas con esos conocimientos.'
+                : null
+        });
+
+    } catch (error) {
+
+        console.error('ERROR BUSCANDO OFERTAS');
+        console.error(error);
+
+        res.send(`
+            <h1>Error buscando ofertas</h1>
+            <p>${error.message}</p>
+            <a href="/busqueda-ofertas">Volver</a>
+        `);
+
+    }
+
+});
+
+app.get('/busqueda-ofertas/pdf', async (req, res) => {
+
+    try {
+
+        const conocimientos = req.query.conocimientos || '';
+        const operador = req.query.operador || 'OR';
+
+        const filtro = construirFiltroConocimientos(
+            conocimientos,
+            operador
+        );
+
+        const Ofertas = await ofertasMongo
+            .find(filtro)
+            .sort({ NroId: 1 })
+            .toArray();
+
+        const doc = new PDFDocument({
+            margin: 50,
+            size: 'A4'
+        });
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader(
+            'Content-Disposition',
+            'inline; filename="ofertas_encontradas.pdf"'
+        );
+
+        doc.pipe(res);
+
+        // ENCABEZADO
+        doc.rect(0, 0, doc.page.width, 80)
+            .fill('#1e293b');
+
+        doc.fillColor('white')
+            .font('Helvetica-Bold')
+            .fontSize(20)
+            .text('MyNegocio', 50, 22);
+
+        doc.font('Helvetica')
+            .fontSize(10)
+            .text('Reporte de Ofertas de Empleo', 50, 50);
+
+        doc.fillColor('#1e293b')
+            .font('Helvetica-Bold')
+            .fontSize(17)
+            .text('Busqueda de Ofertas por Conocimientos', 50, 110);
+
+        doc.fillColor('#334155')
+            .font('Helvetica')
+            .fontSize(10)
+            .text(`Conocimientos: ${conocimientos}`, 50, 138)
+            .text(`Operador logico: ${operador}`, 50, 153);
+
+        let y = 185;
+
+        function celda(texto, x, y, ancho, alto, opciones = {}) {
+
+            if (opciones.fondo) {
+                doc.rect(x, y, ancho, alto)
+                    .fill(opciones.fondo);
+            }
+
+            doc.rect(x, y, ancho, alto)
+                .strokeColor('#d1d5db')
+                .stroke();
+
+            doc.fillColor(opciones.color || '#111827')
+                .font(opciones.bold ? 'Helvetica-Bold' : 'Helvetica')
+                .fontSize(opciones.size || 9)
+                .text(
+                    String(texto),
+                    x + 5,
+                    y + 8,
+                    {
+                        width: ancho - 10,
+                        align: opciones.align || 'left'
+                    }
+                );
+        }
+
+        // CABECERA TABLA
+        celda('NRO', 40, y, 55, 30, {
+            fondo: '#1e293b',
+            color: 'white',
+            bold: true,
+            align: 'center'
+        });
+
+        celda('EMPRESA', 95, y, 130, 30, {
+            fondo: '#1e293b',
+            color: 'white',
+            bold: true
+        });
+
+        celda('PUESTO', 225, y, 140, 30, {
+            fondo: '#1e293b',
+            color: 'white',
+            bold: true
+        });
+
+        celda('PAGO MENSUAL', 365, y, 95, 30, {
+            fondo: '#1e293b',
+            color: 'white',
+            bold: true,
+            align: 'center'
+        });
+
+        celda('EXPERIENCIA', 460, y, 90, 30, {
+            fondo: '#1e293b',
+            color: 'white',
+            bold: true,
+            align: 'center'
+        });
+
+        y += 30;
+
+        Ofertas.forEach((o, index) => {
+
+            if (y > 720) {
+                doc.addPage();
+                y = 60;
+            }
+
+            const fondo = index % 2 === 0 ? '#f8fafc' : 'white';
+
+            const nro = o.NroId && o.NroId.$numberLong
+                ? o.NroId.$numberLong
+                : o.NroId;
+
+            celda(nro, 40, y, 55, 30, {
+                fondo,
+                align: 'center'
+            });
+
+            celda(o.Empresa?.RazonSoc || '', 95, y, 130, 30, {
+                fondo
+            });
+
+            celda(o.Puesto || '', 225, y, 140, 30, {
+                fondo
+            });
+
+            celda(`S/. ${Number(o.PagoMensual || 0).toFixed(2)}`, 365, y, 95, 30, {
+                fondo,
+                align: 'center'
+            });
+
+            celda(`${o.Experiencia || 0} años`, 460, y, 90, 30, {
+                fondo,
+                align: 'center'
+            });
+
+            y += 30;
+
+        });
+
+        y += 25;
+
+        doc.fillColor('#059669')
+            .font('Helvetica-Bold')
+            .fontSize(13)
+            .text(`Total de ofertas encontradas: ${Ofertas.length}`, 50, y);
+
+        doc.end();
+
+    } catch (error) {
+
+        console.error('ERROR GENERANDO PDF OFERTAS');
+        console.error(error);
+
+        res.send(`
+            <h1>Error generando PDF</h1>
+            <p>${error.message}</p>
+            <a href="/busqueda-ofertas">Volver</a>
+        `);
+
+    }
+
+});
+
+
+// ==========================
 // PRUEBA MONGODB
 // ==========================
 

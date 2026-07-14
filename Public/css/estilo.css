@@ -825,105 +825,7 @@ h1{
 
     color:#059669;
 }
-.formulario-card{
-    background:white;
-    max-width:900px;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
-}
 
-.formulario-card h2{
-    margin:20px 0 15px;
-    color:#1e293b;
-}
-
-.formulario-card hr{
-    margin:25px 0;
-    border:none;
-    border-top:1px solid #e5e7eb;
-}
-
-/* ==========================
-   NUEVO PEDIDO CON VARIOS PRODUCTOS
-========================== */
-
-.formulario-card{
-    background:white;
-    max-width:950px;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
-}
-
-.formulario-card h2{
-    margin:20px 0 15px;
-    color:#1e293b;
-}
-
-.formulario-card hr{
-    margin:25px 0;
-    border:none;
-    border-top:1px solid #e5e7eb;
-}
-
-.fila-producto{
-    display:grid;
-    grid-template-columns: 2fr 1fr auto;
-    gap:15px;
-    align-items:end;
-    margin-bottom:15px;
-    padding:15px;
-    background:#f8fafc;
-    border-radius:12px;
-    border:1px solid #e5e7eb;
-}
-
-.contenedor-quitar{
-    display:flex;
-    align-items:end;
-}
-
-.btn-agregar{
-    background:#2563eb;
-    color:white;
-    border:none;
-    padding:12px 20px;
-    border-radius:8px;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.3s;
-}
-
-.btn-agregar:hover{
-    background:#1d4ed8;
-    transform:translateY(-2px);
-}
-
-.btn-quitar{
-    background:#ef4444;
-    color:white;
-    border:none;
-    padding:12px 16px;
-    border-radius:8px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.3s;
-}
-
-.btn-quitar:hover{
-    background:#dc2626;
-    transform:translateY(-2px);
-}
-
-@media(max-width:768px){
-
-    .fila-producto{
-        grid-template-columns:1fr;
-    }
-
-}
 @media print{
 
     .menu,
@@ -935,218 +837,61 @@ h1{
 }
 
 
-/* ==========================
-   MODULO EMPLEO
-========================== */
+.formulario-card{
 
-.acciones-empleo{
-    display:flex;
-    gap:15px;
-    flex-wrap:wrap;
-    margin-bottom:25px;
-}
-
-.seccion-empleo{
-    margin-top:30px;
-}
-
-.oculto{
-    display:none;
-}
-
-.alerta-error{
-    background:#fee2e2;
-    color:#991b1b;
-    padding:15px;
-    border-radius:10px;
-    margin-bottom:20px;
-    font-weight:600;
-}
-
-.btn-eliminar{
-    background:#ef4444 !important;
-}
-
-.btn-pdf{
-    background:#dc2626 !important;
-}
-
-.bloque-impresion{
-    margin-bottom:30px;
-}
-
-@media print{
-
-    .menu,
-    .acciones-empleo,
-    .form-reporte,
-    .seccion-empleo{
-        display:none !important;
-    }
-
-    body{
-        background:white;
-    }
-
-    .contenedor{
-        width:100%;
-        margin:0;
-    }
-
-    .bloque-impresion{
-        box-shadow:none;
-        border:none;
-    }
-}
-
-
-
-/* ==========================
-   MODULO EMPLEO
-========================== */
-
-.acciones-empleo{
-    display:flex;
-    gap:15px;
-    flex-wrap:wrap;
-    margin-bottom:25px;
-}
-
-.seccion-empleo{
-    margin-top:30px;
-}
-
-.oculto{
-    display:none;
-}
-
-.alerta-error{
-    background:#fee2e2;
-    color:#991b1b;
-    padding:15px;
-    border-radius:10px;
-    margin-bottom:20px;
-    font-weight:600;
-}
-
-.btn-eliminar{
-    background:#ef4444 !important;
-}
-
-.btn-pdf{
-    background:#dc2626 !important;
-}
-
-.bloque-impresion{
-    margin-bottom:30px;
-}
-
-@media print{
-
-    .menu,
-    .acciones-empleo,
-    .form-reporte,
-    .seccion-empleo{
-        display:none !important;
-    }
-
-    body{
-        background:white;
-    }
-
-    .contenedor{
-        width:100%;
-        margin:0;
-    }
-
-    .bloque-impresion{
-        box-shadow:none;
-        border:none;
-    }
-}
-
-
-/* ==========================
-   POPUPS / MODALES EMPLEO
-========================== */
-
-.modal-empleo{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(15,23,42,.65);
-    z-index:9999;
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    padding:40px 20px;
-    overflow-y:auto;
-}
-
-.modal-contenido{
     background:white;
-    width:95%;
-    max-width:900px;
-    border-radius:16px;
+
+    max-width:700px;
+
     padding:30px;
-    position:relative;
-    box-shadow:0 20px 50px rgba(0,0,0,.25);
-    animation:aparecerModal .25s ease;
+
+    border-radius:15px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
 }
 
-.cerrar-modal{
-    position:absolute;
-    top:15px;
-    right:18px;
-    background:#ef4444;
-    color:white;
-    border:none;
-    width:34px;
-    height:34px;
-    border-radius:50%;
-    font-size:24px;
-    line-height:30px;
-    cursor:pointer;
-    font-weight:bold;
-}
 
-.cerrar-modal:hover{
-    background:#dc2626;
-}
+/* ==========================
+   BUSQUEDA OFERTAS MONGO
+========================== */
 
-.mostrar-modal{
+.form-busqueda-ofertas{
     display:flex;
+    align-items:end;
+    gap:20px;
+    flex-wrap:wrap;
 }
 
-.oculto{
-    display:none !important;
+.grupo-conocimientos{
+    flex:1;
+    min-width:320px;
 }
 
-@keyframes aparecerModal{
-    from{
-        opacity:0;
-        transform:translateY(-20px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
+.grupo-conocimientos label{
+    display:block;
+    font-weight:700;
+    color:#334155;
+    margin-bottom:8px;
 }
 
-.modal-contenido .formulario-card{
-    max-width:100%;
-    box-shadow:none;
-    padding:0;
+.grupo-conocimientos input{
+    width:100%;
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    font-size:15px;
 }
 
-.modal-contenido h2{
-    margin-bottom:20px;
-    color:#1e293b;
+.grupo-operador{
+    display:flex;
+    gap:15px;
+    align-items:center;
+    padding-bottom:12px;
+    font-weight:700;
 }
 
-.modal-contenido h3{
-    margin-top:20px;
-    color:#1e293b;
+.grupo-operador label{
+    display:flex;
+    align-items:center;
+    gap:5px;
 }
