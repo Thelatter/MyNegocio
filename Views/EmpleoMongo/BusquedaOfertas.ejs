@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Búsqueda de Ofertas</title>
+    <link rel="stylesheet" href="/css/estilo.css">
+</head>
+
+<body>
+
+<%- include('../Partials/Menu') %>
+
+<div class="contenedor">
+
+    <h1>Búsqueda de Ofertas de Empleo x Conocimientos</h1>
+
+    <% if (mensaje) { %>
+        <div class="alerta-error">
+            <%= mensaje %>
+        </div>
+    <% } %>
+
+    <div class="factura">
+
+        <form action="/busqueda-ofertas" method="POST" class="form-busqueda-ofertas">
+
+            <div class="grupo-conocimientos">
+                <label>CONOCIMIENTOS</label>
+
+                <input
+                    type="text"
+                    name="conocimientos"
+                    value="<%= conocimientos %>"
+                    placeholder="Ejemplo: Java, C++, MySql"
+                    required>
+            </div>
+
+            <div class="grupo-operador">
+
+                <label>
+                    <input
+                        type="radio"
+                        name="operador"
+                        value="AND"
+                        <%= operador === 'AND' ? 'checked' : '' %>>
+                    AND
+                </label>
+
+                <label>
+                    <input
+                        type="radio"
+                        name="operador"
+                        value="OR"
+                        <%= operador === 'OR' ? 'checked' : '' %>>
+                    OR
+                </label>
+
+            </div>
+
+            <button type="submit" class="rep">
+                Buscar Ofertas
+            </button>
+
+        </form>
+
+    </div>
+
+    <% if (Ofertas.length > 0) { %>
+
+        <div class="factura bloque-impresion">
+
+            <div class="tabla-contenedor">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NRO</th>
+                            <th>EMPRESA</th>
+                            <th>PUESTO</th>
+                            <th>PAGO MENSUAL</th>
+                            <th>EXPERIENCIA</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% Ofertas.forEach(o => { %>
+                            <tr>
+                                <td>
+                                    <%= o.NroId && o.NroId.$numberLong ? o.NroId.$numberLong : o.NroId %>
+                                </td>
+
+                                <td>
+                                    <%= o.Empresa ? o.Empresa.RazonSoc : '' %>
+                                </td>
+
+                                <td>
+                                    <%= o.Puesto %>
+                                </td>
+
+                                <td>
+                                    S/. <%= Number(o.PagoMensual || 0).toFixed(2) %>
+                                </td>
+
+                                <td>
+                                    <%= o.Experiencia %> años
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <br>
+
+            <a
+                class="link"
+                target="_blank"
+                href="/busqueda-ofertas/pdf?conocimientos=<%= encodeURIComponent(conocimientos) %>&operador=<%= operador %>">
+                Imprimir Ofertas
+            </a>
+
+        </div>
+
+    <% } %>
+
+</div>
+
+</body>
+
+</html>
