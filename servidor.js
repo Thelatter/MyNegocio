@@ -7,7 +7,7 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const nodemailer = require("nodemailer");
-
+const { MongoClient, ObjectId } = require('mongodb');
 
 const {
     encabezadoPDF,
@@ -37,7 +37,31 @@ const pool = mysql.createPool({
     database: process.env.DB_NAME,
     port: process.env.DB_PORT
 });
+// ==========================
+// CONEXION MONGODB
+// ==========================
 
+const mongoClient = new MongoClient(process.env.MONGO_URI);
+
+let mongoDB;
+let ofertasMongo;
+
+async function conectarMongo() {
+    try {
+        await mongoClient.connect();
+
+        mongoDB = mongoClient.db(process.env.MONGO_DB || 'BDOfertas');
+        ofertasMongo = mongoDB.collection(process.env.MONGO_COLLECTION || 'Ofertas');
+
+        console.log('✅ MONGODB CONECTADO');
+
+    } catch (error) {
+        console.error('❌ ERROR MONGODB');
+        console.error(error);
+    }
+}
+
+conectarMongo();
 //const pool = mysql.createPool({
  //   host: 'localhost',
  //   port: 3307,
