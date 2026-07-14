@@ -1975,7 +1975,7 @@ function construirFiltroConocimientos(texto, operador) {
 
 app.get('/busqueda-ofertas', async (req, res) => {
 
-    res.render('EmpleoMongo/BusquedaOfertas', {
+    res.render('EmpleoM/BusquedaOfertas', {
         Ofertas: [],
         conocimientos: '',
         operador: 'OR',
@@ -2001,7 +2001,7 @@ app.post('/busqueda-ofertas', async (req, res) => {
             .sort({ NroId: 1 })
             .toArray();
 
-        res.render('EmpleoMongo/BusquedaOfertas', {
+        res.render('EmpleoM/BusquedaOfertas', {
             Ofertas,
             conocimientos,
             operador,
